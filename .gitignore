@@ -1,0 +1,5 @@
+##############################################################################
+# Visual Studio temporary files, build results, and temp files from add-ons.
+
+out/**
+.vs/**
