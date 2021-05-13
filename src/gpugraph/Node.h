@@ -19,7 +19,7 @@ namespace gpugraph
         void add(std::shared_ptr<Node>);
         void remove(std::shared_ptr<Node> const&);
 
-        void set_use_intermediate(bool);
+        Node& set_use_intermediate(bool);
         bool use_intermediate() const;
 
         Node& set_visible(bool);
@@ -58,6 +58,11 @@ namespace gpugraph
         bool _use_intermediate = false;
         std::shared_ptr<Intermediate> _intermediate;
 
+        bool _visible;
+        float _opacity;
+        
+        Sizing _width;
+        Sizing _height;
         Flex _flex;
 
         vec4 _margin;

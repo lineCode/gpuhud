@@ -25,6 +25,13 @@ namespace gpuhud
 
     void Window::loop()
     {
+        using gpugraph::px;
+
+        auto& node = this->root_node();
+        
+        node->set_width(_subsystem_window->width()|px);
+        node->set_height(_subsystem_window->height()|px);
+
         _subsystem_window->make_current();
         while (!_subsystem_window->is_closed())
         {
