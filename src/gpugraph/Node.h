@@ -17,7 +17,7 @@ namespace gpugraph
         Node();
 
         void add(std::shared_ptr<Node>);
-        void remove(std::shared_ptr<Node>);
+        void remove(std::shared_ptr<Node> const&);
 
         void set_use_intermediate(bool);
         bool use_intermediate() const;

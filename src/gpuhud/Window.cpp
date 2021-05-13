@@ -18,6 +18,9 @@ namespace gpuhud
         : _subsystem(subsystem ? _subsystem : GlfwSubsystem::instance())
         , _subsystem_window(_subsystem->create_window("gpuhud", width, height))
     {
+        auto node = std::make_shared<gpugraph::Node>();
+        set_root_node(node);
+        set_content_node(node);
     }
 
     void Window::loop()

@@ -6,12 +6,12 @@
 #include <functional>
 
 #include "Subsystem.h"
-#include "Widget.h"
+#include "Container.h"
 
 namespace gpuhud
 {
     
-    class Window : public Widget
+    class Window : public Container
     {
     public:
         Window(
