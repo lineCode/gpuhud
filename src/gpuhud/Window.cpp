@@ -2,7 +2,7 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 
 #include <stdlib.h>
@@ -27,6 +27,8 @@ namespace gpuhud
         {
             glClearColor(0.0, 1.0, 0.0, 0.0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            // #1 update node-tree
+            // #2 render composition
             _subsystem_window->swap_buffers();
             _subsystem_window->poll_events();
         }
