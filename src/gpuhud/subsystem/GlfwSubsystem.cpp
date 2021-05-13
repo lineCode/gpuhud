@@ -68,12 +68,16 @@ namespace gpuhud
 
     std::uint32_t GlfwSubsystem::GlfwWindow::width() const
     {
-        return std::uint32_t();
+        int w, h;
+        glfwGetWindowSize(_window.get(), &w, &h);
+        return w;
     }
 
     std::uint32_t GlfwSubsystem::GlfwWindow::height() const
     {
-        return std::uint32_t();
+        int w, h;
+        glfwGetWindowSize(_window.get(), &w, &h);
+        return h;
     }
 
     void GlfwSubsystem::GlfwWindow::set_title(std::string const& title)

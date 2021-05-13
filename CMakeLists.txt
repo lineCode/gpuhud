@@ -16,6 +16,7 @@ add_subdirectory(extern/glm EXCLUDE_FROM_ALL)
 
 add_library(lib_gpugraph
   "src/gpugraph/RenderTarget.cpp" 
+  "src/gpugraph/Node.h" 
   "src/gpugraph/Node.cpp" 
   "src/gpugraph/Context.cpp" 
   "src/gpugraph/Context.cpp"

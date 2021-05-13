@@ -1,4 +1,5 @@
 #include "Node.h"
+#include "Intermediate.h"
 
 namespace gpugraph
 {
@@ -19,15 +20,17 @@ namespace gpugraph
         }), _children.end());
     }
 
-    Node& Node::set_use_intermediate(bool value)
+    Node& Node::set_force_intermediate(bool value)
     {
-        _use_intermediate = value;
+        _force_intermediate = value;
+        if (!_intermediate)
+            _intermediate = std::make_shared<Intermediate>();
         return *this;
     }
 
-    bool Node::use_intermediate() const
+    bool Node::force_intermediate() const
     {
-        return _use_intermediate;
+        return _force_intermediate;
     }
 
     Node& Node::set_visible(bool value)
@@ -83,6 +86,11 @@ namespace gpugraph
     float Node::opacity() const
     {
         return _opacity;
+    }
+
+    std::shared_ptr<Intermediate> const& Node::intermediate() const
+    {
+        return _intermediate;
     }
 
 }

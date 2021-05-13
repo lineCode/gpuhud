@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <array>
 
 #include "types.h"
 #include "attributes.h"
@@ -19,8 +20,8 @@ namespace gpugraph
         void add(std::shared_ptr<Node>);
         void remove(std::shared_ptr<Node> const&);
 
-        Node& set_use_intermediate(bool);
-        bool use_intermediate() const;
+        Node& set_force_intermediate(bool);
+        bool force_intermediate() const;
 
         Node& set_visible(bool);
         bool visible() const;
@@ -52,10 +53,12 @@ namespace gpugraph
         Node& set_border_color(color);
         color const& border_color() const;
 
+        std::shared_ptr<Intermediate> const& intermediate() const;
+
     private:
         bool _layout_changed = true;
         
-        bool _use_intermediate = false;
+        bool _force_intermediate = false;
         std::shared_ptr<Intermediate> _intermediate;
 
         bool _visible;
@@ -71,6 +74,8 @@ namespace gpugraph
 
         Node* _parent;
         std::vector<std::shared_ptr<Node>> _children;
+
+        std::array<vec2, 4> _vertices;
     };
 
 }
