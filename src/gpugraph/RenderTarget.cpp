@@ -3,7 +3,7 @@
 namespace gpuhud
 {
 
-    TiledRenderTarget::TiledRenderTarget(
+    RenderTarget::RenderTarget(
         std::uint32_t width, 
         std::uint32_t height, 
         std::uint32_t tile_width,
@@ -11,17 +11,17 @@ namespace gpuhud
     {
     }
 
-    TiledRenderTarget::~TiledRenderTarget()
+    RenderTarget::~RenderTarget()
     {
         clear();
     }
 
-    std::size_t TiledRenderTarget::to_index(std::uint32_t x, std::uint32_t y)
+    std::size_t RenderTarget::to_index(std::uint32_t x, std::uint32_t y)
     {
         return _fbos.at(y * _tile_count_x + x);
     }
 
-    void TiledRenderTarget::resize(std::uint32_t width, std::uint32_t height)
+    void RenderTarget::resize(std::uint32_t width, std::uint32_t height)
     {
         if (_width == width && _height == height)
             return;
@@ -49,7 +49,7 @@ namespace gpuhud
         }
     }
 
-    void TiledRenderTarget::clear()
+    void RenderTarget::clear()
     {
         glDeleteFramebuffers(static_cast<GLsizei>(_fbos.size()), _fbos.data());
         glDeleteTextures(static_cast<GLsizei>(_textures.size()), _textures.data());

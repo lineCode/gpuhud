@@ -8,16 +8,16 @@
 namespace gpuhud
 {
 
-    class TiledRenderTarget
+    class RenderTarget
     {
     public:
-        TiledRenderTarget(
+        RenderTarget(
             std::uint32_t width=0, 
             std::uint32_t height=0,
             std::uint32_t tile_width=512,
             std::uint32_t overlap=1);
 
-        ~TiledRenderTarget();
+        ~RenderTarget();
 
         void resize(std::uint32_t width, std::uint32_t height);
 
@@ -40,7 +40,7 @@ namespace gpuhud
     };
 
     template<typename F>
-    void TiledRenderTarget::render_to(std::uint32_t x, std::uint32_t y, F&&)
+    void RenderTarget::render_to(std::uint32_t x, std::uint32_t y, F&&)
     {
         fbo = to_index(x, y);
         glBindFramebuffer(fbo);

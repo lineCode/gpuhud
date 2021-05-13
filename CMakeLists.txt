@@ -1,31 +1,18 @@
-﻿# CMakeList.txt : Top-level CMake project file, do global configuration
-# and include sub-projects here.
-#
+﻿project ("gpuhud")
 cmake_minimum_required (VERSION 3.1)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 
-project ("gpuhud")
 #
-#
-#
-# extern
-#
-# glew:
+# glad:
 include_directories(lib_gpuhud PUBLIC "extern/glad/include")
 add_subdirectory(extern/glad EXCLUDE_FROM_ALL)
 
 #
 # glfw
 add_subdirectory(extern/glfw EXCLUDE_FROM_ALL)
-#target_link_libraries(main PRIVATE glfw)
 #
 # glm
 add_subdirectory(extern/glm EXCLUDE_FROM_ALL)
-# target_link_libraries(main PRIVATE glm)
-
-# Include sub-projects.
-#add_subdirectory ("gpuhud")
-#target_link_libraries(main PRIVATE libglew_static)
-
 
 add_library(lib_gpugraph
   "src/gpugraph/RenderTarget.cpp" 
@@ -51,5 +38,5 @@ target_include_directories(lib_gpuhud PUBLIC src/)
 target_link_libraries(lib_gpuhud PUBLIC lib_gpugraph)
 set_property(TARGET lib_gpuhud PROPERTY CXX_STANDARD 17)
 
-add_executable(window_create "examples/window/main.cpp" "src/gpugraph/RenderTarget.cpp" "src/gpugraph/Node.h" "src/gpuhud/Widget.cpp" "src/gpugraph/Context.h" "src/gpugraph/Context.cpp")
+add_executable(window_create "examples/window/main.cpp" "src/gpugraph/RenderTarget.cpp" "src/gpugraph/Node.h" "src/gpuhud/Widget.cpp" "src/gpugraph/Context.h" "src/gpugraph/Context.cpp" "src/gpugraph/attributes.h" "src/gpuhud/Container.h")
 target_link_libraries(window_create PRIVATE lib_gpuhud glad glm)
