@@ -1,1 +1,1 @@
-add_library(glad STATIC src/glad.c)
+add_library(glad STATIC src/gl.c)
