@@ -24,7 +24,7 @@ namespace gpugraph
             /// the viewport to rect.width(), rect.height()
             /// before the call to render_func
             void render(std::function<void()> render_func);
-            void blit();
+            void blit(glm::mat4 const&);
 
         private:
             RenderTarget* _render_target;
@@ -35,7 +35,7 @@ namespace gpugraph
         RenderTarget(
             std::size_t width=0, 
             std::size_t height=0,
-            std::size_t tile_width=512,
+            std::size_t tile_width=32,
             std::size_t overlap=1);
 
         ~RenderTarget();
@@ -45,9 +45,12 @@ namespace gpugraph
 
         Tile& tile(std::size_t x, std::size_t y);
 
+        std::size_t tile_count() const;
+        std::vector<std::unique_ptr<Tile>> const& tiles() const;
+
         void _debug_draw();
 
-        void blit();
+        void blit(glm::mat4 const&);
 
     private:
         void clear();
@@ -60,6 +63,7 @@ namespace gpugraph
         std::size_t _tile_count_x = 0;
         std::size_t _tile_count_y = 0;
         std::vector<GLuint> _fbos;
+        std::vector<GLuint> _depth;
         std::vector<GLuint> _textures;
         GLuint _vbo;
         std::vector<std::unique_ptr<Tile>> _tiles;

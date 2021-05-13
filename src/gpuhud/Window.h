@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <functional>
 
+#include <gpugraph/utils.h>
+
 #include "Subsystem.h"
 #include "Container.h"
 
@@ -39,10 +41,10 @@ namespace gpuhud
         std::unique_ptr<Subsystem::Window> _subsystem_window;
 
         bool _debug_draw_layout = true;
-        bool _debug_draw_intermediate = true;
+        bool _debug_draw_intermediate = false;
 
-        std::size_t _frame_count=0;
-        float _fps;
+        gpugraph::FrameCounter _frame_counter = gpugraph::FrameCounter();
+        void _draw_intermediate(bool triangles=true);
     };
 
 }

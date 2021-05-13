@@ -53,7 +53,7 @@ namespace gpugraph
     template<typename T>
     T Rectangle<T>::height() const
     {
-        return y1 - y1;
+        return y2 - y1;
     }
 
     using rect = Rectangle<float>;

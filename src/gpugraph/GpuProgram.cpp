@@ -139,7 +139,7 @@ namespace gpugraph
     {
         GLint loc = attribute(name);
         glEnableVertexAttribArray(loc);
-        glVertexAttribPointer(loc, size, type, normalized, stride, reinterpret_cast<void*>(0));
+        glVertexAttribPointer(loc, size, type, normalized, stride, reinterpret_cast<void*>(offset));
     }
 
     void GpuProgram::set_uniform(const std::string& name,
