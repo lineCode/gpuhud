@@ -8,6 +8,11 @@ namespace gpugraph
         _render_target._debug_draw();
     }
 
+    RenderTarget& Intermediate::render_target()
+    {
+        return _render_target;
+    }
+
     void Intermediate::set_size(std::size_t width, std::size_t height)
     {
         _render_target.set_size(width, height);

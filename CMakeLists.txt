@@ -20,7 +20,7 @@ add_library(lib_gpugraph
   "src/gpugraph/Node.cpp" 
   "src/gpugraph/Context.cpp" 
   "src/gpugraph/Context.cpp"
-  "src/gpugraph/Intermediate.cpp" )
+  "src/gpugraph/Intermediate.cpp"  "src/gpugraph/GpuProgram.cpp")
 target_include_directories(lib_gpugraph PUBLIC src/)
 target_link_libraries(lib_gpugraph PUBLIC glad)
 target_link_libraries(lib_gpugraph PUBLIC glfw)

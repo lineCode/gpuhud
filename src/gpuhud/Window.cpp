@@ -1,8 +1,8 @@
 #include "Window.h"
 
+#include <gpugraph/opengl.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 
 #include <stdlib.h>
@@ -55,6 +55,7 @@ namespace gpuhud
                 glScalef(1.f, -1.f, 1.f);
                 glOrtho( 0, width, 0, height, -1, 1 );
                 root_node->intermediate()->_debug_draw(true);
+                root_node->intermediate()->render_target().blit();
                 glPopMatrix();
                 glMatrixMode(GL_MODELVIEW_MATRIX);
                 glPopMatrix();

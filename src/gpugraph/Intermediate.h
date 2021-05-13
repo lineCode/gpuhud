@@ -15,6 +15,8 @@ namespace gpugraph
 
         void _debug_draw(bool recursive=true);
 
+        RenderTarget& render_target();
+
     private:
         Intermediate* parent;
         std::shared_ptr<Intermediate> _children;

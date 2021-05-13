@@ -3,7 +3,7 @@
 #include <stdexcept>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 #include "GlfwSubsystem.h"
 
@@ -42,7 +42,7 @@ namespace gpuhud
             throw std::runtime_error("failed to create glfw window");
         }
         make_current();
-        gladLoadGL();
+        gladLoadGL(glfwGetProcAddress);
     }
 
     void GlfwSubsystem::GlfwWindow::make_current()

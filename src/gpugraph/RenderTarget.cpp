@@ -2,8 +2,43 @@
 
 #include <iostream>
 
+#include "GpuProgram.h"
+
 namespace gpugraph
 {
+
+
+    class BlitProgram : public GpuProgram
+    {
+    public:
+        // TODO: move this later to RenderState or whatever
+        static BlitProgram& instance()
+        {
+            static std::shared_ptr<BlitProgram> instance;
+            if (!instance)
+                instance = std::shared_ptr<BlitProgram>(new BlitProgram);
+            return *instance;
+        }
+
+    private:
+        BlitProgram() : GpuProgram({
+            VertexShader(R"source(
+                in vec2 position;
+                void main()
+                {
+                    gl_Position = gl_ModelViewProjectionMatrix * vec4(position.x, position.y, 0, 1);
+                }
+            )source"),
+            FragmentShader(R"source(
+                void main()
+                {
+                   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); 
+                }
+            )source") })
+        {
+        }
+    };
+
 
     RenderTarget::RenderTarget(
         std::size_t width,
@@ -19,6 +54,7 @@ namespace gpugraph
     RenderTarget::~RenderTarget()
     {
         clear();
+        glDeleteBuffers(1, &_vbo);
     }
 
     std::size_t RenderTarget::to_index(std::size_t x, std::size_t y)
@@ -51,9 +87,9 @@ namespace gpugraph
             glBindTexture(GL_TEXTURE_2D, texture_id);
             glBindFramebuffer(GL_FRAMEBUFFER, _fbos.at(i));
             glTexImage2D(
-                GL_TEXTURE_2D, 0, GL_RGBA, 
+                GL_TEXTURE_2D, 0, GL_RGBA,
                 static_cast<GLsizei>(_tile_width),
-                static_cast<GLsizei>(_tile_width), 
+                static_cast<GLsizei>(_tile_width),
                 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -65,6 +101,13 @@ namespace gpugraph
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         _tiles.resize(_fbos.size());
+        std::vector<GLfloat> vertices;
+        std::vector<GLushort> indices;
+        // 1 quad for each tile..
+        vertices.resize(2 * 4 * _tiles.size());
+
+        auto vertex = vertices.data();
+        std::uint16_t count = 0;
         for (std::size_t y = 0; y < _tile_count_y; ++y)
         {
             for (std::size_t x = 0; x < _tile_count_x; ++x)
@@ -75,13 +118,19 @@ namespace gpugraph
                 auto y1 = static_cast<float>(y) * tw - _overlap;
                 auto x2 = static_cast<float>(x) * tw + _tile_width - _overlap;
                 auto y2 = static_cast<float>(y) * tw + _tile_width - _overlap;
-                auto pos = rect(x1, y1, x2, y2);
-                _tiles[index] = std::make_unique<Tile>(
-                    _fbos.at(index),
-                    _textures.at(index),
-                    std::move(pos));
+                *vertex++ = x1; *vertex++ = y1;
+                *vertex++ = x2; *vertex++ = y1;
+                *vertex++ = x1; *vertex++ = y2;
+                *vertex++ = x2; *vertex++ = y2;
+                _tiles[index] = std::make_unique<Tile>(this, index,
+                    rect(x1, y1, x2, y2));
             }
         }
+        glGenBuffers(1, &_vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        if(vertices.size() > 0)
+            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     void RenderTarget::_debug_draw()
@@ -106,6 +155,12 @@ namespace gpugraph
         glEnd();
     }
 
+    void RenderTarget::blit()
+    {
+        for (auto& tile : _tiles)
+            tile->blit();
+    }
+
     void RenderTarget::clear()
     {
         glDeleteFramebuffers(static_cast<GLsizei>(_fbos.size()), _fbos.data());
@@ -128,7 +183,8 @@ namespace gpugraph
 
     void RenderTarget::Tile::render(std::function<void()> f)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+        // glDrawElementsBaseVertex
+        glBindFramebuffer(GL_FRAMEBUFFER, _render_target->_fbos.at(_base_index));
         glViewport(0, 0,
             static_cast<GLsizei>(_rectangle.width()),
             static_cast<GLsizei>(_rectangle.height()));
@@ -136,9 +192,19 @@ namespace gpugraph
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    RenderTarget::Tile::Tile(GLuint fbo, GLuint texture, rect rectangle)
-        : _fbo(fbo)
-        , _texture(texture)
+    void RenderTarget::Tile::blit()
+    {
+        auto& program = BlitProgram::instance();
+        program.bind();
+        glBindTexture(GL_TEXTURE_2D, _render_target->_textures.at(_base_index));
+        glBindBuffer(GL_ARRAY_BUFFER, _render_target->_vbo);
+        program.set_attribute("position", 2, GL_FLOAT, GL_FALSE, /*sizeof(float) * 2*/0, 0);
+        glDrawArrays(GL_TRIANGLE_STRIP, static_cast<GLint>(_base_index)*4, 4);
+    }
+
+    RenderTarget::Tile::Tile(RenderTarget *render_target, std::size_t base_index, rect rectangle)
+        : _render_target(render_target)
+        , _base_index(base_index)
         , _rectangle(std::move(rectangle))
     {
     }

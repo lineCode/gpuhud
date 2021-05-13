@@ -1,10 +1,10 @@
 #pragma once
 
 #define GLM_FORCE_XYZW_ONLY
-#include <glm/vec2.hpp>
-#include <glm/mat3x3.hpp>
-#undef GLM_CONFIG_XYZW_ONLY
-#include <glm/vec4.hpp>
+#include <glm/glm.hpp>
+// #include <glm/vec2.hpp>
+// #include <glm/mat3x3.hpp>
+// #include <glm/vec4.hpp>
 
 #include "Rectangle.h"
 
