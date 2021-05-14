@@ -40,6 +40,11 @@ namespace gpugraph
     {
     }
 
+    std::unique_ptr<RenderTarget::Tile> RenderTarget::create_tile(std::size_t base_index, rect rect)
+    {
+        return std::make_unique<Tile>(this, base_index, std::move(rect));
+    }
+
     RenderTarget::RenderTarget(
         std::size_t width,
         std::size_t height,
@@ -126,8 +131,7 @@ namespace gpugraph
                 *vertex++ = x2; *vertex++ = y2;
                 *vertex++ = 1.f; *vertex++ = 1.f;
 
-                _tiles[index] = std::make_unique<Tile>(this, index,
-                    rect(x1, y1, x2, y2));
+                create_tile(index, rect(x1, y1, x2, y2));
             }
         }
         glBindBuffer(GL_ARRAY_BUFFER, _vertex_buffer);

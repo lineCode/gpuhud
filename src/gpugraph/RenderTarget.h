@@ -33,13 +33,14 @@ namespace gpugraph
         {
         public:
             /// :-)
-            Tile(RenderTarget *, std::size_t base_index, rect x);
+            Tile(RenderTarget *, std::size_t base_index, rect);
+            virtual ~Tile() = default;
 
             /// tile vertices
             rect const& rectangle() const;
             
             /// render to tile (gl)
-            void render(std::function<void()> render_func);
+            virtual void render(std::function<void()> render_func);
 
             /// draw tile with some transformation applied
             void blit(glm::mat4 const&);
@@ -58,7 +59,7 @@ namespace gpugraph
             std::size_t overlap=1);
         
         /// :-)
-        ~RenderTarget();
+        virtual ~RenderTarget();
 
         /// resize the target. will only happen if width or height was changed
         void set_size(std::size_t width, std::size_t height);
@@ -80,6 +81,9 @@ namespace gpugraph
 
         /// draw the whole tiling, which is actually a plane, with some transformation applied
         void blit(glm::mat4 const&);
+
+    protected:
+        virtual std::unique_ptr<Tile> create_tile(std::size_t base_index, rect);
 
     private:
         void clear();
