@@ -13,6 +13,7 @@
 namespace gpugraph
 {
 
+    // TODO: optimize with "npot" (some day)
     class RenderTarget
     {
     public:

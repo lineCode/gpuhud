@@ -221,7 +221,6 @@ namespace gpugraph
             static_cast<GLsizei>(_rectangle.width()),
             static_cast<GLsizei>(_rectangle.height()));
         glClearColor(0.1f, 0.2f, 0.0, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
         f();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
