@@ -10,9 +10,6 @@
 
 #include "Program.h"
 
-using namespace std;
-using namespace glm;
-
 namespace gpugraph
 {
 
@@ -110,15 +107,14 @@ namespace gpugraph
             glGetShaderInfoLog(handle, logsize, &logsize, log);
 
             // TODO: throw with designed exception
-            std::cout << "failed to compile shader: " << endl;
-            std::cout << log << endl;
+            std::cout << "failed to compile shader: " << std::endl;
+            std::cout << log << std::endl;
 
             exit(EXIT_FAILURE);
         }
         else 
         {
             _handle = handle;
-            std::cout << "[Info] Shader compiled successfully" << endl;
         }
     }
 
@@ -158,7 +154,7 @@ namespace gpugraph
         glGetProgramiv(_handle, GL_LINK_STATUS, &result);
         if (result != GL_TRUE) 
         {
-            cout << "[Error] linkage error" << endl;
+            std::cout << "linkage error" << std::endl;
 
             GLsizei logsize = 0;
             glGetProgramiv(_handle, GL_INFO_LOG_LENGTH, &logsize);
@@ -166,7 +162,7 @@ namespace gpugraph
             char* log = new char[logsize];
             glGetProgramInfoLog(_handle, logsize, &logsize, log);
 
-            cout << log << endl;
+            std::cout << log << std::endl;
         }
     }
 
@@ -181,7 +177,7 @@ namespace gpugraph
     GLint Program::attribute(const std::string& name) {
         GLint attrib = glGetAttribLocation(_handle, name.c_str());
         if (attrib == GL_INVALID_OPERATION || attrib < 0)
-            cout << "[Error] Attribute " << name << " doesn't exist in program" << endl;
+            std::cout << "attribute " << name << " doesn't exist in program" << std::endl;
 
         return attrib;
     }
