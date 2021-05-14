@@ -49,6 +49,7 @@ namespace gpugraph
         , _overlap(overlap)
         , _blit_program(std::make_unique<BlitProgram>())
     {
+        glGenBuffers(1, &_vertex_buffer);
         set_size(width, height);
     }
 
@@ -116,11 +117,14 @@ namespace gpugraph
             }
         }
 
-        //        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         _tiles.resize(_framebuffer_objects.size());
         std::vector<GLfloat> vertices;
         std::vector<GLushort> indices;
-        // 1 quad for each tile..
+
+        //
+        // vertices & texture coords combined. the "2" because
+        // we're using 2D-arrays of 4 vertices and 4 texture
+        // coordinates per tile.
         vertices.resize(2 * (4 + 4) * _tiles.size());
 
         auto vertex = vertices.data();
@@ -151,7 +155,6 @@ namespace gpugraph
                     rect(x1, y1, x2, y2));
             }
         }
-        glGenBuffers(1, &_vertex_buffer);
         glBindBuffer(GL_ARRAY_BUFFER, _vertex_buffer);
         if (vertices.size() > 0)
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
