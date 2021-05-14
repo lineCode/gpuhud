@@ -84,40 +84,15 @@ namespace gpugraph
         _framebuffer_objects.resize(tile_count);
         _texture_attachments.resize(tile_count);
         _depth_attachments.resize(tile_count);
+        _tiles.resize(tile_count);
 
         glGenFramebuffers(static_cast<GLsizei>(tile_count), _framebuffer_objects.data());
         glGenTextures(static_cast<GLsizei>(tile_count), _texture_attachments.data());
         glGenRenderbuffers(static_cast<GLsizei>(tile_count), _depth_attachments.data());
+
         for (std::size_t i = 0; i < _framebuffer_objects.size(); ++i)
-        {
-            auto texture_id = _texture_attachments.at(i);
-            auto fbo_id = _framebuffer_objects.at(i);
+            _build_framebuffer(i);
 
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
-            glBindTexture(GL_TEXTURE_2D, texture_id);
-
-            glTexImage2D(
-                GL_TEXTURE_2D, 0, GL_RGBA,
-                static_cast<GLsizei>(_tile_width),
-                static_cast<GLsizei>(_tile_width),
-                0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_id, 0);
-
-            glBindRenderbuffer(GL_RENDERBUFFER, _depth_attachments.at(i));
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-                static_cast<GLsizei>(_tile_width),
-                static_cast<GLsizei>(_tile_width));
-            glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depth_attachments.at(i));
-            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            {
-                throw std::runtime_error("failed to create render target, framebuffer incomplete");
-            }
-        }
-
-        _tiles.resize(_framebuffer_objects.size());
         std::vector<GLfloat> vertices;
         std::vector<GLushort> indices;
 
@@ -160,6 +135,37 @@ namespace gpugraph
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
+
+    void RenderTarget::_build_framebuffer(std::size_t index)
+    {
+        auto texture_id = _texture_attachments.at(index);
+        auto fbo_id = _framebuffer_objects.at(index);
+        auto depth_id = _depth_attachments.at(index);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, GL_RGBA,
+            static_cast<GLsizei>(_tile_width),
+            static_cast<GLsizei>(_tile_width),
+            0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_id, 0);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, depth_id);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+            static_cast<GLsizei>(_tile_width),
+            static_cast<GLsizei>(_tile_width));
+        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_id);
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        {
+            throw std::runtime_error("failed to create render target, framebuffer incomplete");
+        }
+    }
+
 
     void RenderTarget::_debug_draw()
     {

@@ -84,6 +84,7 @@ namespace gpugraph
     private:
         void clear();
         std::size_t to_index(std::size_t x, std::size_t y);
+        void _build_framebuffer(std::size_t index);
 
         std::size_t _width = 0;
         std::size_t _height = 0;

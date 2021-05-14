@@ -19,6 +19,7 @@ namespace gpugraph
         std::chrono::high_resolution_clock::time_point _time;
     };
 
+    /// read file into memory
     std::string read_file(const char*);
 
 }
