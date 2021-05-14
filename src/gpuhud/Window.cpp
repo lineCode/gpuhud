@@ -57,8 +57,8 @@ namespace gpuhud
             root_node->set_width(width | px);
             root_node->set_height(height | px);
             root_node->intermediate()->set_size(width, height);
-
-            for (auto& tile : root_node->intermediate()->render_target().tiles())
+            auto const& tiles = root_node->intermediate()->render_target().tiles();
+            for (auto& tile : tiles)
             {
                 tile->render([&]() {
                     auto w = tile->rectangle().width();
