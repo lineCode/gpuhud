@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <functional>
 
-#include <gpugraph/utils.h>
+#include <gpugraph/util.h>
 
 #include "Subsystem.h"
 #include "Container.h"

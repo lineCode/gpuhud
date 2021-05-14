@@ -21,7 +21,9 @@ add_library(lib_gpugraph
   "src/gpugraph/Context.cpp" 
   "src/gpugraph/Context.cpp"
   "src/gpugraph/Intermediate.cpp"  
-  "src/gpugraph/Program.cpp")
+  "src/gpugraph/Program.cpp"
+  "src/gpugraph/util.cpp"
+  )
 target_include_directories(lib_gpugraph PUBLIC src/)
 target_link_libraries(lib_gpugraph PUBLIC glad)
 target_link_libraries(lib_gpugraph PUBLIC glfw)
