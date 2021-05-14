@@ -26,6 +26,11 @@ namespace gpugraph
     SkiaRenderTarget::SkiaTile::SkiaTile(RenderTarget* render_target, std::size_t base_index, rect r)
         : Tile(render_target, base_index, std::move(r))
     {
+        _debug_intermediate_paint.setStrokeWidth(1.0f);
+        _debug_intermediate_paint.setAntiAlias(false);
+        _debug_intermediate_paint.setColor(SK_ColorGREEN);
+        _debug_intermediate_paint.setStyle(SkPaint::kStroke_Style);
+
         auto& context = Context::current().skia_context();
 
         GrGLFramebufferInfo framebufferInfo;
@@ -65,6 +70,15 @@ namespace gpugraph
         _surface->getCanvas()->clear(SK_ColorWHITE);
         f();
         _surface->getCanvas()->restore();
+
+        auto x1 = rectangle().x1;
+        auto y1 = rectangle().y1;
+        _surface->getCanvas()->translate(x1, y1);
+        _surface->getCanvas()->drawRect(
+            SkRect::MakeLTRB( 0.5, 0.5, rectangle().width()-1, rectangle().height()-1),
+            _debug_intermediate_paint);
+        _surface->getCanvas()->translate(-x1, -y1);
+
         context.skia_context().flush();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
    }

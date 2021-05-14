@@ -32,6 +32,9 @@ namespace gpugraph
         friend class SkiaRenderTarget;
         SkSurface* _skia_surface;
         std::unique_ptr<GrDirectContext> _skia_context;
+
+        bool _debug_intermediate = true;
+        bool _debug_layout = false;
     };
 
 }

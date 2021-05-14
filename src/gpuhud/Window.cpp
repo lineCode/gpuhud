@@ -73,16 +73,12 @@ namespace gpuhud
                     auto& surface = gpugraph::Context::current().skia_surface();
                 	SkCanvas* canvas = surface.getCanvas(); // We don't manage this pointer's lifetime.
                     SkPaint paint;
-                    canvas->clear(t ? SK_ColorGRAY : SK_ColorWHITE);
-                    t = !t;
+                    canvas->clear(SK_ColorWHITE);
 		            paint.setColor(SK_ColorCYAN);
                     {
                         SkPaint paint;
                         //paint.setARGB(100, 100, 255, 255);
                         paint.setAntiAlias(true);
-                        //paint.setStyle(
-                        //paint.setStrokeWidth(2);
-
                         auto tf = SkTypeface::MakeFromName("Arial", SkFontStyle::Normal());
                         SkFont font(tf);
                         font.setSize(100);
@@ -150,47 +146,5 @@ namespace gpuhud
     {
         return _subsystem_window->height();
     }
-
-    void Window::set_debug_draw_layout(bool value)
-    {
-        _debug_draw_layout = value;
-    }
-
-    bool Window::debug_draw_layout() const
-    {
-        return _debug_draw_layout;
-    }
-
-    void Window::set_debug_draw_intermediate(bool value)
-    {
-        _debug_draw_intermediate = value;
-    }
-
-    bool Window::debug_draw_intermediate() const
-    {
-        return _debug_draw_intermediate;
-    }
-
-    void Window::_draw_intermediate(bool)
-    {
-        auto width = _subsystem_window->width();
-        auto height = _subsystem_window->height();
-
-        auto& intermediate = *this->root_node()->intermediate();
-
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        glOrtho(0, width, height, 0, 1., -1.);
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-        intermediate._debug_draw(true);
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-    }
-
 
 }

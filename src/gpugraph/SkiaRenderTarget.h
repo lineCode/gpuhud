@@ -17,6 +17,7 @@ namespace gpugraph
             void render(std::function<void()> f) override;
 
         private:
+            SkPaint _debug_intermediate_paint;
             std::unique_ptr<SkSurface> _surface;
         };
 
