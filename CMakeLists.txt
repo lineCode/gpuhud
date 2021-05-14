@@ -10,9 +10,12 @@ add_subdirectory(extern/glad EXCLUDE_FROM_ALL)
 #
 # glfw
 add_subdirectory(extern/glfw EXCLUDE_FROM_ALL)
+
 #
 # glm
 add_subdirectory(extern/glm EXCLUDE_FROM_ALL)
+
+link_directories(extern/skia/out/Release)
 
 add_library(lib_gpugraph
   "src/gpugraph/RenderTarget.cpp" 
@@ -23,11 +26,14 @@ add_library(lib_gpugraph
   "src/gpugraph/Intermediate.cpp"  
   "src/gpugraph/Program.cpp"
   "src/gpugraph/util.cpp"
-  )
+   "src/gpugraph/SkiaRenderTarget.cpp")
+target_include_directories(lib_gpugraph PUBLIC extern/skia)
+target_include_directories(lib_gpugraph PUBLIC extern/skia/out/Release/gen)
 target_include_directories(lib_gpugraph PUBLIC src/)
 target_link_libraries(lib_gpugraph PUBLIC glad)
 target_link_libraries(lib_gpugraph PUBLIC glfw)
 target_link_libraries(lib_gpugraph PUBLIC glm)
+target_link_libraries(lib_gpugraph PUBLIC skia)
 set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 17)
 
 add_library(lib_gpuhud
