@@ -11,10 +11,10 @@ namespace gpugraph
     public:
         FrameCounter();
         bool increase();
-        std::size_t frames_per_second() const;
+        double frames_per_second() const;
 
     private:
-        std::size_t _frames = 0;
+        double _frames = 0;
         std::size_t _count = 0;
         std::chrono::high_resolution_clock::time_point _time;
     };

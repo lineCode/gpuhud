@@ -14,17 +14,18 @@ namespace gpugraph
     {
         ++_count;
         auto now = std::chrono::high_resolution_clock::now();
-        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - _time).count() >= 1000)
+        auto gone = std::chrono::duration_cast<std::chrono::milliseconds>(now - _time).count();
+        if (gone >= 1000)
         {
             _time = now;
-            _frames = _count;
+            _frames = _count / (gone / 1000.0);
             _count = 0;
             return true;
         }
         return false;
     }
 
-    std::size_t FrameCounter::frames_per_second() const
+    double FrameCounter::frames_per_second() const
     {
         return _frames;
     }
