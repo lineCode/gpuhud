@@ -2,6 +2,9 @@
 cmake_minimum_required (VERSION 3.1)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 
+# OpenGL
+find_package(OpenGL REQUIRED)
+
 #
 # glad:
 include_directories(lib_gpuhud PUBLIC "extern/glad/include")
@@ -34,6 +37,7 @@ target_link_libraries(lib_gpugraph PUBLIC glad)
 target_link_libraries(lib_gpugraph PUBLIC glfw)
 target_link_libraries(lib_gpugraph PUBLIC glm)
 target_link_libraries(lib_gpugraph PUBLIC skia)
+target_link_libraries(lib_gpugraph PUBLIC ${OPENGL_LIBRARIES})
 set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 17)
 
 add_library(lib_gpuhud
