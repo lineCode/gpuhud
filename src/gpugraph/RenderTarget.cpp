@@ -192,6 +192,11 @@ namespace gpugraph
             tile->blit(mat);
     }
 
+    std::vector<GLuint> const& RenderTarget::framebuffer_objects() const
+    {
+        return _framebuffer_objects;
+    }
+
     void RenderTarget::clear()
     {
         glDeleteFramebuffers(static_cast<GLsizei>(_framebuffer_objects.size()), _framebuffer_objects.data());

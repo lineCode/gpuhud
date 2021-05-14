@@ -33,19 +33,19 @@ namespace gpugraph
         {
         public:
             /// :-)
-            Tile(RenderTarget *, std::size_t base_index, rect);
+            Tile(RenderTarget*, std::size_t base_index, rect);
             virtual ~Tile() = default;
 
             /// tile vertices
             rect const& rectangle() const;
-            
+
             /// render to tile (gl)
             virtual void render(std::function<void()> render_func);
 
             /// draw tile with some transformation applied
             void blit(glm::mat4 const&);
 
-        private:
+        protected:
             RenderTarget* _render_target;
             std::size_t _base_index;
             rect _rectangle;
@@ -53,17 +53,17 @@ namespace gpugraph
 
         /// :-)
         RenderTarget(
-            std::size_t width=0, 
-            std::size_t height=0,
-            std::size_t tile_width=256,
-            std::size_t overlap=1);
-        
+            std::size_t width = 0,
+            std::size_t height = 0,
+            std::size_t tile_width = 256,
+            std::size_t overlap = 1);
+
         /// :-)
         virtual ~RenderTarget();
 
         /// resize the target. will only happen if width or height was changed
         void set_size(std::size_t width, std::size_t height);
-       
+
         /// :-)
         std::array<std::size_t, 2> size() const;
 
@@ -82,6 +82,9 @@ namespace gpugraph
         /// draw the whole tiling, which is actually a plane, with some transformation applied
         void blit(glm::mat4 const&);
 
+        std::vector<GLuint> const& framebuffer_objects() const;
+
+
     protected:
         virtual std::unique_ptr<Tile> create_tile(std::size_t base_index, rect);
 
@@ -97,7 +100,7 @@ namespace gpugraph
 
         std::size_t _tile_count_x = 0;
         std::size_t _tile_count_y = 0;
-        
+
         std::vector<GLuint> _framebuffer_objects;
         std::vector<GLuint> _depth_attachments;
         std::vector<GLuint> _texture_attachments;

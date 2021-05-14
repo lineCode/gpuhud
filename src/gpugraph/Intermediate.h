@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "RenderTarget.h"
+#include "SkiaRenderTarget.h"
 
 namespace gpugraph
 {
@@ -20,7 +20,7 @@ namespace gpugraph
     private:
         Intermediate* parent;
         std::shared_ptr<Intermediate> _children;
-        RenderTarget _render_target;
+        SkiaRenderTarget _render_target;
     };
 
 }

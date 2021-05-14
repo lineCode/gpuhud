@@ -1,33 +1,37 @@
 #pragma once
 
+#pragma warning(push)
+#pragma warning(disable: 4244)
+#pragma warning(disable: 4081)
+#pragma warning(disable: 4267)
+#define SK_GL
+#include <skia.h>
+#pragma warning(pop)
+
 namespace gpugraph
 {
-
-    struct None
-    {
-    } none;
 
     class Context
     {
     public:
-        enum class Edge
-        {
-            Left = 0,
-            Top = 1,
-            Right = 2,
-            Bottom = 3
-        };
+        Context();
 
-        using vec2 = std::array<float, 2>;
-        using vec4 = std::array<float, 4>;
-        using color = std::array<float, 4>;
+        // get active context for the current thread
+        static Context& current();
 
-        Node* parent;
+        // make this context the active one for the current thread
+        void make_current();
 
-        color border_color;
-        vec4 border_width;
-        vec4 border_radius;
+        // get skia context
+        GrDirectContext& skia_context();
+
+        // get skia surface
+        SkSurface& skia_surface();
+
+    private:
+        friend class SkiaRenderTarget;
+        SkSurface* _skia_surface;
+        std::unique_ptr<GrDirectContext> _skia_context;
     };
-
 
 }

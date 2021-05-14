@@ -6,6 +6,7 @@
 #include <functional>
 
 #include <gpugraph/util.h>
+#include <gpugraph/Context.h>
 
 #include "Subsystem.h"
 #include "Container.h"
@@ -39,6 +40,8 @@ namespace gpuhud
         std::string _title;
         std::shared_ptr<Subsystem> _subsystem;
         std::unique_ptr<Subsystem::Window> _subsystem_window;
+        
+        gpugraph::Context _context;
 
         bool _debug_draw_layout = true;
         bool _debug_draw_intermediate = true;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderTarget.h"
+#include "Context.h"
 
 namespace gpugraph
 {
@@ -12,6 +13,11 @@ namespace gpugraph
         {
         public:
             SkiaTile(RenderTarget *, std::size_t base_index, rect);
+        
+            void render(std::function<void()> f) override;
+
+        private:
+            std::unique_ptr<SkSurface> _surface;
         };
 
         SkiaRenderTarget(

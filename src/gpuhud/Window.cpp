@@ -32,7 +32,9 @@ namespace gpuhud
     Window::Window(std::uint32_t width, std::uint32_t height, std::shared_ptr<Subsystem> subsystem)
         : _subsystem(subsystem ? _subsystem : GlfwSubsystem::instance())
         , _subsystem_window(_subsystem->create_window("gpuhud", width, height))
+        , _context()
     {
+        _context.make_current();
 
         auto root_node = std::make_shared<gpugraph::Node>();
         set_root_node(root_node);
@@ -61,6 +63,10 @@ namespace gpuhud
             for (auto& tile : tiles)
             {
                 tile->render([&]() {
+
+                    auto& surface = gpugraph::Context::current().skia_surface();
+                	SkCanvas* canvas = surface.getCanvas(); // We don't manage this pointer's lifetime.
+
                     auto w = tile->rectangle().width();
                     auto h = tile->rectangle().height();
                     glMatrixMode(GL_PROJECTION);
@@ -76,6 +82,13 @@ namespace gpuhud
                     glColor3f(0.0f, 1.0f, 0.0f); glVertex2f(w-50.f, 50.f);
                     glColor3f(0.0f, 0.0f, 1.0f); glVertex2f(w-50.f, 100.f);
                     glEnd();
+
+		            /*SkPaint paint;
+		            paint.setColor(SK_ColorWHITE);
+		            canvas->drawPaint(paint);
+		            paint.setColor(SK_ColorBLUE);
+		            canvas->drawRect({10, 10, 20, 20}, paint);
+                    */
 
                     glPopMatrix();
                     glMatrixMode(GL_PROJECTION);
