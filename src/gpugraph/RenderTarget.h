@@ -75,6 +75,8 @@ namespace gpugraph
 
         /// :-)
         std::size_t tile_count() const;
+        std::size_t tile_count_x() const;
+        std::size_t tile_count_y() const;
 
         /// outputs tile vertices as GL_LINE_LOOP to gl
         void _debug_draw();
@@ -84,6 +86,7 @@ namespace gpugraph
 
         std::vector<GLuint> const& framebuffer_objects() const;
 
+        std::size_t overlap() const;
 
     protected:
         virtual std::unique_ptr<Tile> create_tile(std::size_t base_index, rect);

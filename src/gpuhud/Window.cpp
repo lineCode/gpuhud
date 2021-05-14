@@ -60,34 +60,48 @@ namespace gpuhud
             root_node->set_width(width | px);
             root_node->set_height(height | px);
 
-            glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
             root_node->intermediate()->set_size(width, height);
-            glPopClientAttrib();
 
             auto const& tiles = root_node->intermediate()->render_target().tiles();
 
             static float deg = 0.f;
+            deg += 3.0f;
+            bool t;
             for (auto& tile : tiles)
             {
                 tile->render([&]() {
                     auto& surface = gpugraph::Context::current().skia_surface();
                 	SkCanvas* canvas = surface.getCanvas(); // We don't manage this pointer's lifetime.
                     SkPaint paint;
-                    canvas->clear(SK_ColorBLUE);
+                    canvas->clear(t ? SK_ColorGRAY : SK_ColorWHITE);
+                    t = !t;
 		            paint.setColor(SK_ColorCYAN);
-                    deg += 0.1f;
-                    canvas->rotate(deg);
-		            canvas->drawRect({-50, -50, 50, 50}, paint);
+                    {
+                        SkPaint paint;
+                        //paint.setARGB(100, 100, 255, 255);
+                        paint.setAntiAlias(true);
+                        //paint.setStyle(
+                        //paint.setStrokeWidth(2);
+
+                        auto tf = SkTypeface::MakeFromName("Arial", SkFontStyle::Normal());
+                        SkFont font(tf);
+                        font.setSize(100);
+                        canvas->drawSimpleText("GpuHud", 6, SkTextEncoding::kUTF8, 200, 100, font, paint);
+                    }
+
+                    canvas->rotate(deg, width/2, height/2);
+		            canvas->drawRect({300, 300, 
+                        static_cast<float>(width-300), static_cast<float>(height-300)}, paint);
                 });
             }
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-            glPushAttrib(GL_ENABLE_BIT);
-            glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
             glViewport(0, 0, width, height);
-            glClearColor(0.0, 0.0f, 0.0f, 0.0f);
+            glPushAttrib(GL_COLOR_BUFFER_BIT);
+            glClearColor(1.0, 1.0f, 1.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glPopAttrib();
             auto& intermediate = *this->root_node()->intermediate();
             auto mat = glm::ortho(
                 static_cast<float>(0),
@@ -97,11 +111,10 @@ namespace gpuhud
             );
             glDisable(GL_DEPTH_TEST);
             intermediate.render_target().blit(mat);
-            glPopClientAttrib();
-            glPopAttrib();
 
-            //if (_debug_draw_intermediate)
-            //    _draw_intermediate();
+            /*
+            if (_debug_draw_intermediate)
+                _draw_intermediate();*/
 
             _subsystem_window->swap_buffers();
             _subsystem_window->poll_events();

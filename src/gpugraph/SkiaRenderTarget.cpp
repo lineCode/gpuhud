@@ -32,7 +32,11 @@ namespace gpugraph
         framebufferInfo.fFBOID = render_target->framebuffer_objects().at(base_index);
         framebufferInfo.fFormat = GL_RGBA8;
 
-	    SkColorType colorType = kRGBA_8888_SkColorType;
+        auto x1 = rectangle().x1;
+        auto y1 = rectangle().y1;
+        auto overlap = render_target->overlap();
+	    
+        SkColorType colorType = kRGBA_8888_SkColorType;
 	    GrBackendRenderTarget backendRenderTarget(
             static_cast<int>(rectangle().width()), 
             static_cast<int>(rectangle().height()),
@@ -41,15 +45,15 @@ namespace gpugraph
 		    framebufferInfo);
 
 	    //(replace line below with this one to enable correct color spaces) sSurface = SkSurface::MakeFromBackendRenderTarget(sContext, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, SkColorSpace::MakeSRGB(), nullptr).release();
-	    _surface.reset(SkSurface::MakeFromBackendRenderTarget(&context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, nullptr).release());
+	    _surface.reset(SkSurface::MakeFromBackendRenderTarget(&context, backendRenderTarget, kTopLeft_GrSurfaceOrigin, colorType, nullptr, nullptr).release());
+        _surface->getCanvas()->translate(-x1, -y1);
+            //((y2 - render_target->size()[1])));
 	    if (!_surface) 
             throw std::runtime_error("failed to create skia surface");
     }
 
     void SkiaRenderTarget::SkiaTile::render(std::function<void()> f)
     {
-        // glDisable(GL_TEXTURE_2D);
-        // glDisable(GL_DEPTH_TEST);
         auto fbo_id = _render_target->framebuffer_objects().at(_base_index);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
         glViewport(0, 0,

@@ -74,6 +74,9 @@ namespace gpugraph
         if (_width == width && _height == height)
             return;
 
+        glPushAttrib(GL_TEXTURE_BIT);
+        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+
         clear();
 
         _width = width;
@@ -138,6 +141,9 @@ namespace gpugraph
         if (vertices.size() > 0)
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glPopClientAttrib();
+        glPopAttrib();
     }
 
     void RenderTarget::_build_framebuffer(std::size_t index)
@@ -188,13 +194,24 @@ namespace gpugraph
 
     void RenderTarget::blit(glm::mat4 const& mat)
     {
+        glPushAttrib(GL_TEXTURE_BIT);
+        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+
         for (auto& tile : _tiles)
             tile->blit(mat);
+
+        glPopClientAttrib();
+        glPopAttrib();
     }
 
     std::vector<GLuint> const& RenderTarget::framebuffer_objects() const
     {
         return _framebuffer_objects;
+    }
+
+    std::size_t RenderTarget::overlap() const
+    {
+        return _overlap;
     }
 
     void RenderTarget::clear()
@@ -222,6 +239,16 @@ namespace gpugraph
     std::size_t RenderTarget::tile_count() const
     {
         return _tiles.size();
+    }
+
+    std::size_t RenderTarget::tile_count_x() const
+    {
+        return _tile_count_x;
+    }
+
+    std::size_t RenderTarget::tile_count_y() const
+    {
+        return _tile_count_y;
     }
 
     std::vector<std::unique_ptr<RenderTarget::Tile>> const& RenderTarget::tiles() const
