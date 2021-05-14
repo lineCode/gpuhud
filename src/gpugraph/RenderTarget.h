@@ -6,7 +6,9 @@
 #include <functional>
 
 #include "Rectangle.h"
+#include "Program.h"
 #include "opengl.h"
+
 
 namespace gpugraph
 {
@@ -14,6 +16,18 @@ namespace gpugraph
     class RenderTarget
     {
     public:
+        class BlitProgram : public Program
+        {
+        public:
+            BlitProgram();
+
+            Uniform<int> texture;
+            Uniform<glm::mat4> transform;
+
+            Attribute position;
+            Attribute texture_coord;
+        };
+
         struct Tile
         {
         public:
@@ -85,6 +99,7 @@ namespace gpugraph
         GLuint _vertex_buffer;
 
         std::vector<std::unique_ptr<Tile>> _tiles;
+        std::unique_ptr<BlitProgram> _blit_program;
     };
 
 }

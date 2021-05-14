@@ -9,72 +9,36 @@
 namespace gpugraph
 {
 
-    Program::VertexShader blit_vs(R"source(
-        uniform mat4 transform;
+    RenderTarget::BlitProgram::BlitProgram()
+        : Program({
+        VertexShader(R"source(
+            uniform mat4 transform;
 
-        in vec2 position;
-        in vec2 texture_coord;
+            in vec2 position;
+            in vec2 texture_coord;
                 
-        out vec2 tex;
+            out vec2 tex;
 
-        void main()
-        {
-            tex = texture_coord;
-            gl_Position = transform * vec4(position.x, position.y, 0, 1.0);
-        }
-    )source");
-
-
-    class BlitProgram : public Program
+            void main()
+            {
+                tex = texture_coord;
+                gl_Position = transform * vec4(position.x, position.y, 0, 1.0);
+            }
+        )source"),
+        FragmentShader(R"source(
+            uniform sampler2D texture;
+            in vec2 tex;
+            void main()
+            {
+                gl_FragColor = texture2D(texture, tex); 
+            }
+        )source") })
+        , texture(this, "texture")
+        , transform(this, "transform")
+        , position(this, "position")
+        , texture_coord(this, "texture_coord")
     {
-    public:
-        Uniform<int> texture;
-        Uniform<glm::mat4> transform;
-
-        Attribute position;
-        Attribute texture_coord;
-
-        static BlitProgram& instance()
-        {
-            static std::shared_ptr<BlitProgram> instance;
-            if (!instance)
-                instance = std::shared_ptr<BlitProgram>(new BlitProgram);
-            return *instance;
-        }
-
-    private:
-        BlitProgram()
-            : Program({
-            VertexShader(R"source(
-                uniform mat4 transform;
-
-                in vec2 position;
-                in vec2 texture_coord;
-                
-                out vec2 tex;
-
-                void main()
-                {
-                    tex = texture_coord;
-                    gl_Position = transform * vec4(position.x, position.y, 0, 1.0);
-                }
-            )source"),
-            FragmentShader(R"source(
-                uniform sampler2D texture;
-                in vec2 tex;
-                void main()
-                {
-                   gl_FragColor = texture2D(texture, tex); 
-                }
-            )source") })
-            , texture(this, "texture")
-            , transform(this, "transform")
-            , position(this, "position")
-            , texture_coord(this, "texture_coord")
-        {
-        }
-    };
-
+    }
 
     RenderTarget::RenderTarget(
         std::size_t width,
@@ -83,6 +47,7 @@ namespace gpugraph
         std::size_t overlap)
         : _tile_width(tile_width)
         , _overlap(overlap)
+        , _blit_program(std::make_unique<BlitProgram>())
     {
         set_size(width, height);
     }
@@ -263,7 +228,7 @@ namespace gpugraph
 
     void RenderTarget::Tile::blit(glm::mat4 const& transform)
     {
-        auto& program = BlitProgram::instance();
+        auto& program = *_render_target->_blit_program;
         auto usage = program.use();
 
         program.transform = transform;
@@ -271,7 +236,7 @@ namespace gpugraph
         glBindBuffer(GL_ARRAY_BUFFER, _render_target->_vertex_buffer);
         program.position.set(2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
         program.texture_coord.set(2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, sizeof(float) * 2);
-        
+
         glActiveTexture(GL_TEXTURE0);
         glEnable(GL_TEXTURE_2D);
         auto texture_id = _render_target->_texture_attachments.at(_base_index);
