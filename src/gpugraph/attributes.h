@@ -55,4 +55,12 @@ namespace gpugraph
         std::tuple<std::variant<Automatic, Sizing>> value;
     };
 
+    //
+    // only support static / absolute for now..
+    enum class Position
+    {
+        Static = 0,
+        Absolute = 1
+    };
+
 }

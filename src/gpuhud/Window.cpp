@@ -66,7 +66,6 @@ namespace gpuhud
 
             static float deg = 0.f;
             deg += 3.0f;
-            bool t;
             for (auto& tile : tiles)
             {
                 tile->render([&]() {
@@ -85,7 +84,7 @@ namespace gpuhud
                         canvas->drawSimpleText("GpuHud", 6, SkTextEncoding::kUTF8, 200, 100, font, paint);
                     }
 
-                    canvas->rotate(deg, width/2, height/2);
+                    canvas->rotate(deg, static_cast<SkScalar>(width/2), static_cast<SkScalar>(height/2));
 		            canvas->drawRect({300, 300, 
                         static_cast<float>(width-300), static_cast<float>(height-300)}, paint);
                 });

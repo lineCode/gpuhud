@@ -22,14 +22,14 @@ link_directories(extern/skia/out/Release)
 
 add_library(lib_gpugraph
   "src/gpugraph/RenderTarget.cpp" 
-  "src/gpugraph/Node.h" 
-  "src/gpugraph/Node.cpp" 
+  "src/gpugraph/Node.cpp"
+  "src/gpugraph/NodeState.cpp"
   "src/gpugraph/Context.cpp" 
   "src/gpugraph/Context.cpp"
   "src/gpugraph/Intermediate.cpp"  
   "src/gpugraph/Program.cpp"
   "src/gpugraph/util.cpp"
-   "src/gpugraph/SkiaRenderTarget.cpp")
+  "src/gpugraph/SkiaRenderTarget.cpp")
 target_include_directories(lib_gpugraph PUBLIC extern/skia)
 target_include_directories(lib_gpugraph PUBLIC extern/skia/out/Release/gen)
 target_include_directories(lib_gpugraph PUBLIC src/)

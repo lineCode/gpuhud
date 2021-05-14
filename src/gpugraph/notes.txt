@@ -1,1 +1,0 @@
-RenderTarget.cpp: dirty opengl state..
