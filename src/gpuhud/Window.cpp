@@ -73,16 +73,13 @@ namespace gpuhud
                     auto& surface = gpugraph::Context::current().skia_surface();
                 	SkCanvas* canvas = surface.getCanvas(); // We don't manage this pointer's lifetime.
                     SkPaint paint;
-		            paint.setColor(SK_ColorWHITE);
-		            canvas->drawPaint(paint);
+                    canvas->clear(SK_ColorBLUE);
+		            paint.setColor(SK_ColorCYAN);
+                    deg += 0.1f;
                     canvas->rotate(deg);
-                    deg += 0.01f;
-		            paint.setColor(SK_ColorRED);
-		            canvas->drawRect({-100, -100, 100, 100}, paint);
-		            canvas->drawRect({-0.2, -0.2, 0.2, 0.2}, paint);
+		            canvas->drawRect({-50, -50, 50, 50}, paint);
                 });
             }
-            
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -98,6 +95,7 @@ namespace gpuhud
                 static_cast<float>(height),
                 static_cast<float>(0)
             );
+            glDisable(GL_DEPTH_TEST);
             intermediate.render_target().blit(mat);
             glPopClientAttrib();
             glPopAttrib();

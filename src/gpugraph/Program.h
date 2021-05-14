@@ -55,6 +55,7 @@ namespace gpugraph
         Usage& operator=(Usage&&) = default;
 
     private:
+        GLint _last;
         Program& _program;
     };
 

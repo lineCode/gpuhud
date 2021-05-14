@@ -16,6 +16,7 @@ namespace gpugraph
     Program::Usage::Usage(Program& program)
         : _program(program)
     {
+        glGetIntegerv(GL_CURRENT_PROGRAM, &_last);
         _program.bind();
         for(auto index : _program._attributes)
             glEnableVertexAttribArray(index);
@@ -25,7 +26,8 @@ namespace gpugraph
     {
         for(auto index : _program._attributes)
             glDisableVertexAttribArray(index);
-        _program.release();
+        glUseProgram(_last);
+        //_program.release();
     }
 
     Program::Usage Program::use()
