@@ -3,15 +3,18 @@
 #include <iostream>
 #include <glm/glm.hpp>
 
-#include "GpuProgram.h"
+#include "Program.h"
 
 namespace gpugraph
 {
 
 
-    class BlitProgram : public GpuProgram
+    class BlitProgram : public Program
     {
     public:
+        Uniform<int> texture;
+        Uniform<glm::mat4> transform;
+
         // TODO: move this later to RenderState or whatever
         static BlitProgram& instance()
         {
@@ -22,7 +25,7 @@ namespace gpugraph
         }
 
     private:
-        BlitProgram() : GpuProgram({
+        BlitProgram() : Program({
             VertexShader(R"source(
                 uniform mat4 transform;
 
@@ -45,6 +48,8 @@ namespace gpugraph
                    gl_FragColor = texture2D(texture, tex); 
                 }
             )source") })
+            , texture(this, "texture")
+            , transform(this, "transform")
         {
         }
     };
@@ -100,7 +105,6 @@ namespace gpugraph
         {
             auto texture_id = _textures.at(i);
             auto fbo_id = _fbos.at(i);
-            auto depth_id = _depth.at(i);
             
             glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
             glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -115,12 +119,11 @@ namespace gpugraph
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_id, 0);
 
-            glBindRenderbuffer(GL_RENDERBUFFER, depth_id);
+            glBindRenderbuffer(GL_RENDERBUFFER, _depth.at(i));
 	        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 
                 static_cast<GLsizei>(_tile_width), 
                 static_cast<GLsizei>(_tile_width));
 	        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depth.at(i));
-
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             {
                 throw std::runtime_error("failed to create render target, framebuffer incomplete");
@@ -205,7 +208,6 @@ namespace gpugraph
         _tiles.clear();
         _fbos.clear();
         _textures.clear();
-        _depth.clear();
         _tile_count_x = _tile_count_y = 0;
     }
 
@@ -232,13 +234,14 @@ namespace gpugraph
     void RenderTarget::Tile::render(std::function<void()> f)
     {
 	    glDisable(GL_TEXTURE_2D);
+	    glDisable(GL_DEPTH_TEST);
         auto fbo_id = _render_target->_fbos.at(_base_index);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
         glViewport(0, 0,
             static_cast<GLsizei>(_rectangle.width()),
             static_cast<GLsizei>(_rectangle.height()));
         glClearColor(0.1f, 0.2f, 0.0, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         f();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
@@ -247,14 +250,17 @@ namespace gpugraph
     {
         auto& program = BlitProgram::instance();
         program.bind();
+
         glBindBuffer(GL_ARRAY_BUFFER, _render_target->_vbo);
         program.set_attribute("position", 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
         program.set_attribute("texture_coord", 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, sizeof(float) * 2);
-        program.set_uniform("transform", transform);
-        auto texture_id = _render_target->_textures.at(_base_index);
-        program.set_uniform("texture", static_cast<int>(0));
+
+        program.transform = transform;
+
+        program.texture = 0;
         glActiveTexture(GL_TEXTURE0);
         glEnable(GL_TEXTURE_2D);
+        auto texture_id = _render_target->_textures.at(_base_index);
         glBindTexture(GL_TEXTURE_2D, texture_id);
 
         glDrawArrays(GL_TRIANGLE_STRIP, static_cast<GLint>(_base_index)*4, 4);

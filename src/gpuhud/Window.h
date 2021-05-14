@@ -41,7 +41,7 @@ namespace gpuhud
         std::unique_ptr<Subsystem::Window> _subsystem_window;
 
         bool _debug_draw_layout = true;
-        bool _debug_draw_intermediate = false;
+        bool _debug_draw_intermediate = true;
 
         gpugraph::FrameCounter _frame_counter = gpugraph::FrameCounter();
         void _draw_intermediate(bool triangles=true);

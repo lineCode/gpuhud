@@ -35,7 +35,7 @@ namespace gpugraph
         RenderTarget(
             std::size_t width=0, 
             std::size_t height=0,
-            std::size_t tile_width=32,
+            std::size_t tile_width=256,
             std::size_t overlap=1);
 
         ~RenderTarget();

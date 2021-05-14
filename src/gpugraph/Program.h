@@ -6,26 +6,41 @@
 
 #pragma once
 
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <initializer_list>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "opengl.h"
 
 namespace gpugraph
 {
 
-    class GpuProgram 
+    class Program 
     {
     public:
+        template<typename T>
+        class Uniform
+        {
+        public:
+            Uniform(Program* program, const std::string& name)
+            {
+                program->bind();
+                _loc = program->uniform(name);
+            }
+
+            Uniform& operator=(T const&);
+            operator T const& () const { return _value; }
+
+        private:
+            GLuint _loc;
+            T _value;
+        };
+
         class Shader;
         class VertexShader;
         class FragmentShader;
 
-        // constructor
-        GpuProgram(std::vector<Shader> shader);
+        Program(std::vector<Shader> shader);
 
         void bind() const;
         void release() const;
@@ -35,23 +50,12 @@ namespace gpugraph
         GLint attribute(const std::string& name);
         void set_attribute(const std::string& name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset);
 
-        GLint uniform(const std::string& name);
-
-        void set_uniform(const std::string& name, float x, float y, float z);
-        void set_uniform(const std::string& name, const glm::vec3& v);
-        /*void set_uniform(const std::string& name, const glm::dvec3& v);
-        void set_uniform(const std::string& name, const glm::vec4& v);
-        void set_uniform(const std::string& name, const glm::dvec4& v);
-        void set_uniform(const std::string& name, const glm::dmat4& m);*/
-        void set_uniform(const std::string& name, const glm::mat4& m);
-        void set_uniform(const std::string& name, const glm::mat3& m);
-        void set_uniform(const std::string& name, float val);
-        void set_uniform(const std::string& name, int val);
-
-        ~GpuProgram();
+        ~Program();
 
     private:
-        GpuProgram();
+        GLint uniform(const std::string& name);
+        
+        Program();
 
         std::map<std::string, GLint> _uniforms;
         std::map<std::string, GLint> _attributes;
@@ -61,7 +65,7 @@ namespace gpugraph
         void link();
     };
 
-    class GpuProgram::Shader
+    class Program::Shader
     {
     public:
         Shader(std::string source, GLenum type);
@@ -71,10 +75,10 @@ namespace gpugraph
 
     private:
         GLuint _handle;
-        friend class GpuProgram;
+        friend class Program;
     };
 
-    class GpuProgram::VertexShader : public GpuProgram::Shader
+    class Program::VertexShader : public Program::Shader
     {
     public:
         VertexShader(std::string source)
@@ -83,7 +87,7 @@ namespace gpugraph
         }
     };
 
-    class GpuProgram::FragmentShader : public GpuProgram::Shader
+    class Program::FragmentShader : public Program::Shader
     {
     public:
         FragmentShader(std::string source)

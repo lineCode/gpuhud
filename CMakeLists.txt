@@ -20,16 +20,14 @@ add_library(lib_gpugraph
   "src/gpugraph/Node.cpp" 
   "src/gpugraph/Context.cpp" 
   "src/gpugraph/Context.cpp"
-  "src/gpugraph/Intermediate.cpp"  "src/gpugraph/GpuProgram.cpp")
+  "src/gpugraph/Intermediate.cpp"  
+  "src/gpugraph/Program.cpp")
 target_include_directories(lib_gpugraph PUBLIC src/)
 target_link_libraries(lib_gpugraph PUBLIC glad)
 target_link_libraries(lib_gpugraph PUBLIC glfw)
 target_link_libraries(lib_gpugraph PUBLIC glm)
 set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 17)
 
-
-#
-#
 add_library(lib_gpuhud
   "src/gpuhud/subsystem/GlfwSubsystem.cpp"
   "src/gpuhud/Window.cpp"

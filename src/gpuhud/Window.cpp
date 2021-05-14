@@ -61,7 +61,6 @@ namespace gpuhud
             for (auto& tile : root_node->intermediate()->render_target().tiles())
             {
                 tile->render([&]() {
-                    return;
                     auto w = tile->rectangle().width();
                     auto h = tile->rectangle().height();
                     glMatrixMode(GL_PROJECTION);
@@ -87,7 +86,7 @@ namespace gpuhud
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glViewport(0, 0, width, height);
-            glClearColor(1.0, 0.0f, 0.0f, 0.0f);
+            glClearColor(0.0, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if (_debug_draw_intermediate)
@@ -164,7 +163,6 @@ namespace gpuhud
         auto width = _subsystem_window->width();
         auto height = _subsystem_window->height();
 
-        // will move this ..
         auto& intermediate = *this->root_node()->intermediate();
 
         glMatrixMode(GL_PROJECTION);

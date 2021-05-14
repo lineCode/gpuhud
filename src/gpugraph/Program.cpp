@@ -12,7 +12,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "GpuProgram.h"
+#include "Program.h"
 
 
 using namespace std;
@@ -20,6 +20,46 @@ using namespace glm;
 
 namespace gpugraph
 {
+
+    template<>
+    Program::Uniform<int>& Program::Uniform<int>::operator=(int const& value)
+    {
+        glUniform1i(_loc, value);
+        _value = value;
+        return *this;
+    }
+
+    template<>
+    Program::Uniform<float>& Program::Uniform<float>::operator=(float const& value)
+    {
+        glUniform1f(_loc, value);
+        _value = value;
+        return *this;
+    }
+
+    template<>
+    Program::Uniform<vec3>& Program::Uniform<vec3>::operator=(vec3 const& value)
+    {
+        glUniform3fv(_loc, 1, value_ptr(value));
+        _value = value;
+        return *this;
+    }
+
+    template<>
+    Program::Uniform<mat3>& Program::Uniform<mat3>::operator=(mat3 const& value)
+    {
+        glUniformMatrix3fv(_loc, 1, GL_FALSE, value_ptr(value));
+        _value = value;
+        return *this;
+    }
+
+    template<>
+    Program::Uniform<mat4>& Program::Uniform<mat4>::operator=(mat4 const& value)
+    {
+        glUniformMatrix4fv(_loc, 1, GL_FALSE, value_ptr(value));
+        _value = value;
+        return *this;
+    }
 
     std::string read_file(const char* filename) 
     {
@@ -39,7 +79,7 @@ namespace gpugraph
         return buffer;
     }
 
-    GpuProgram::Shader::Shader(std::string source, GLenum type) 
+    Program::Shader::Shader(std::string source, GLenum type) 
     {
         _handle = glCreateShader(type);
         if (_handle == 0)
@@ -71,29 +111,29 @@ namespace gpugraph
         }
     }
 
-    GLuint GpuProgram::Shader::handle() const 
+    GLuint Program::Shader::handle() const 
     {
         return _handle;
     }
 
-    GpuProgram::Shader::~Shader() {}
+    Program::Shader::~Shader() {}
 
-    GpuProgram::GpuProgram() 
+    Program::Program() 
     {
         _handle = glCreateProgram();
         if (!_handle)
             throw std::runtime_error("Impossible to create a new shader program");
     }
 
-    GpuProgram::GpuProgram(std::vector<Shader> shaderList)
-        : GpuProgram() 
+    Program::Program(std::vector<Shader> shaderList)
+        : Program() 
     {
         for (auto& s : shaderList)
             glAttachShader(_handle, s.handle());
         link();
     }
 
-    void GpuProgram::link() {
+    void Program::link() {
         glLinkProgram(_handle);
         GLint result;
         glGetProgramiv(_handle, GL_LINK_STATUS, &result);
@@ -111,23 +151,22 @@ namespace gpugraph
         }
     }
 
-    GLint GpuProgram::uniform(const std::string& name) {
+    GLint Program::uniform(const std::string& name) 
+    {
         auto it = _uniforms.find(name);
-        if (it == _uniforms.end()) {
-            // uniform that is not referenced
+        if (it == _uniforms.end()) 
+        {
             GLint r = glGetUniformLocation(_handle, name.c_str());
             if (r == GL_INVALID_OPERATION || r < 0)
-                cout << "[Error] uniform " << name << " doesn't exist in program" << endl;
-            // add it anyways
+                throw std::runtime_error("uniform " + name + " doesn't exist");
             _uniforms[name] = r;
-
             return r;
         }
         else
             return it->second;
     }
 
-    GLint GpuProgram::attribute(const std::string& name) {
+    GLint Program::attribute(const std::string& name) {
         GLint attrib = glGetAttribLocation(_handle, name.c_str());
         if (attrib == GL_INVALID_OPERATION || attrib < 0)
             cout << "[Error] Attribute " << name << " doesn't exist in program" << endl;
@@ -135,73 +174,29 @@ namespace gpugraph
         return attrib;
     }
 
-    void GpuProgram::set_attribute(const std::string& name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset)
+    void Program::set_attribute(const std::string& name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset)
     {
         GLint loc = attribute(name);
         glEnableVertexAttribArray(loc);
         glVertexAttribPointer(loc, size, type, normalized, stride, reinterpret_cast<void*>(offset));
     }
 
-    void GpuProgram::set_uniform(const std::string& name,
-        float x,
-        float y,
-        float z) {
-        glUniform3f(uniform(name), x, y, z);
-    }
-
-    void GpuProgram::set_uniform(const std::string& name, const vec3& v) {
-        glUniform3fv(uniform(name), 1, value_ptr(v));
-    }
-
-    /*
-    void GpuProgram::set_uniform(const std::string& name, const dvec3& v) {
-        glUniform3dv(uniform(name), 1, value_ptr(v));
-    }
-
-    void GpuProgram::set_uniform(const std::string& name, const vec4& v) {
-        glUniform4fv(uniform(name), 1, value_ptr(v));
-    }
-
-    void GpuProgram::set_uniform(const std::string& name, const dvec4& v) {
-        glUniform4dv(uniform(name), 1, value_ptr(v));
-    }
-
-    void GpuProgram::set_uniform(const std::string& name, const dmat4& m) {
-        glUniformMatrix4dv(uniform(name), 1, GL_FALSE, value_ptr(m));
-    }*/
-
-    void GpuProgram::set_uniform(const std::string& name, const mat4& m) {
-        glUniformMatrix4fv(uniform(name), 1, GL_FALSE, value_ptr(m));
-    }
-
-    void GpuProgram::set_uniform(const std::string& name, const mat3& m) {
-        glUniformMatrix3fv(uniform(name), 1, GL_FALSE, value_ptr(m));
-    }
-
-    void GpuProgram::set_uniform(const std::string& name, float val) {
-        glUniform1f(uniform(name), val);
-    }
-
-    void GpuProgram::set_uniform(const std::string& name, int val) {
-        glUniform1i(uniform(name), val);
-    }
-
-    GpuProgram::~GpuProgram() 
+    Program::~Program() 
     {
         glDeleteProgram(_handle);
     }
 
-    void GpuProgram::bind() const 
+    void Program::bind() const 
     {
         glUseProgram(_handle);
     }
     
-    void GpuProgram::release() const 
+    void Program::release() const 
     {
         glUseProgram(0);
     }
 
-    GLuint GpuProgram::handle() const 
+    GLuint Program::handle() const 
     {
         return _handle;
     }
