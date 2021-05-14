@@ -33,7 +33,7 @@ set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 17)
 add_library(lib_gpuhud
   "src/gpuhud/subsystem/GlfwSubsystem.cpp"
   "src/gpuhud/Window.cpp"
-  "src/gpuhud/Subsystem.cpp"
+  
   "src/gpuhud/Widget.cpp"
   "src/gpuhud/Container.cpp")
 target_include_directories(lib_gpuhud PUBLIC src/)

@@ -33,5 +33,4 @@ namespace gpuhud
         _content_node = node;
     }
 
-
 }
