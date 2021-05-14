@@ -131,7 +131,7 @@ namespace gpugraph
                 *vertex++ = x2; *vertex++ = y2;
                 *vertex++ = 1.f; *vertex++ = 1.f;
 
-                create_tile(index, rect(x1, y1, x2, y2));
+                _tiles[index] = create_tile(index, rect(x1, y1, x2, y2));
             }
         }
         glBindBuffer(GL_ARRAY_BUFFER, _vertex_buffer);
@@ -223,7 +223,7 @@ namespace gpugraph
     {
         return _tiles;
     }
-
+    
     void RenderTarget::Tile::render(std::function<void()> f)
     {
         glDisable(GL_TEXTURE_2D);
