@@ -5,8 +5,24 @@
 
 #include "Program.h"
 
+
 namespace gpugraph
 {
+
+    Program::VertexShader blit_vs(R"source(
+        uniform mat4 transform;
+
+        in vec2 position;
+        in vec2 texture_coord;
+                
+        out vec2 tex;
+
+        void main()
+        {
+            tex = texture_coord;
+            gl_Position = transform * vec4(position.x, position.y, 0, 1.0);
+        }
+    )source");
 
 
     class BlitProgram : public Program
@@ -15,7 +31,9 @@ namespace gpugraph
         Uniform<int> texture;
         Uniform<glm::mat4> transform;
 
-        // TODO: move this later to RenderState or whatever
+        Attribute position;
+        Attribute texture_coord;
+
         static BlitProgram& instance()
         {
             static std::shared_ptr<BlitProgram> instance;
@@ -25,7 +43,8 @@ namespace gpugraph
         }
 
     private:
-        BlitProgram() : Program({
+        BlitProgram()
+            : Program({
             VertexShader(R"source(
                 uniform mat4 transform;
 
@@ -50,6 +69,8 @@ namespace gpugraph
             )source") })
             , texture(this, "texture")
             , transform(this, "transform")
+            , position(this, "position")
+            , texture_coord(this, "texture_coord")
         {
         }
     };
@@ -93,7 +114,7 @@ namespace gpugraph
         _tile_count_x = (width + tw - 1) / tw;
         _tile_count_y = (height + tw - 1) / tw;
 
-        auto tile_count = static_cast<std::size_t>(_tile_count_x* _tile_count_y);
+        auto tile_count = static_cast<std::size_t>(_tile_count_x * _tile_count_y);
         _fbos.resize(tile_count);
         _textures.resize(tile_count);
         _depth.resize(tile_count);
@@ -105,7 +126,7 @@ namespace gpugraph
         {
             auto texture_id = _textures.at(i);
             auto fbo_id = _fbos.at(i);
-            
+
             glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
             glBindTexture(GL_TEXTURE_2D, texture_id);
 
@@ -114,23 +135,23 @@ namespace gpugraph
                 static_cast<GLsizei>(_tile_width),
                 static_cast<GLsizei>(_tile_width),
                 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-            
+
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_id, 0);
 
             glBindRenderbuffer(GL_RENDERBUFFER, _depth.at(i));
-	        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 
-                static_cast<GLsizei>(_tile_width), 
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+                static_cast<GLsizei>(_tile_width),
                 static_cast<GLsizei>(_tile_width));
-	        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depth.at(i));
+            glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depth.at(i));
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             {
                 throw std::runtime_error("failed to create render target, framebuffer incomplete");
             }
         }
 
-//        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        //        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         _tiles.resize(_fbos.size());
         std::vector<GLfloat> vertices;
         std::vector<GLushort> indices;
@@ -151,13 +172,13 @@ namespace gpugraph
                 auto y2 = static_cast<float>(y) * tw + _tile_width - _overlap;
                 *vertex++ = x1; *vertex++ = y1;
                 *vertex++ = 0.f; *vertex++ = 0.f;
-                
+
                 *vertex++ = x2; *vertex++ = y1;
                 *vertex++ = 1.f; *vertex++ = 0.f;
-                
+
                 *vertex++ = x1; *vertex++ = y2;
                 *vertex++ = 0.f; *vertex++ = 1.f;
-                
+
                 *vertex++ = x2; *vertex++ = y2;
                 *vertex++ = 1.f; *vertex++ = 1.f;
 
@@ -167,7 +188,7 @@ namespace gpugraph
         }
         glGenBuffers(1, &_vbo);
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-        if(vertices.size() > 0)
+        if (vertices.size() > 0)
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
@@ -233,8 +254,8 @@ namespace gpugraph
 
     void RenderTarget::Tile::render(std::function<void()> f)
     {
-	    glDisable(GL_TEXTURE_2D);
-	    glDisable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
         auto fbo_id = _render_target->_fbos.at(_base_index);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
         glViewport(0, 0,
@@ -249,31 +270,27 @@ namespace gpugraph
     void RenderTarget::Tile::blit(glm::mat4 const& transform)
     {
         auto& program = BlitProgram::instance();
-        program.bind();
-
-        glBindBuffer(GL_ARRAY_BUFFER, _render_target->_vbo);
-        program.set_attribute("position", 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
-        program.set_attribute("texture_coord", 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, sizeof(float) * 2);
+        auto usage = program.use();
 
         program.transform = transform;
-
         program.texture = 0;
+        glBindBuffer(GL_ARRAY_BUFFER, _render_target->_vbo);
+        program.position.set(2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
+        program.texture_coord.set(2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, sizeof(float) * 2);
+        
         glActiveTexture(GL_TEXTURE0);
         glEnable(GL_TEXTURE_2D);
         auto texture_id = _render_target->_textures.at(_base_index);
         glBindTexture(GL_TEXTURE_2D, texture_id);
 
-        glDrawArrays(GL_TRIANGLE_STRIP, static_cast<GLint>(_base_index)*4, 4);
-        program.release();
+        glDrawArrays(GL_TRIANGLE_STRIP, static_cast<GLint>(_base_index) * 4, 4);
 
         glDisable(GL_TEXTURE_2D);
-        glDisableVertexAttribArray(program.attribute("position"));
-        glDisableVertexAttribArray(program.attribute("texture_coord"));
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    RenderTarget::Tile::Tile(RenderTarget *render_target, std::size_t base_index, rect rectangle)
+    RenderTarget::Tile::Tile(RenderTarget* render_target, std::size_t base_index, rect rectangle)
         : _render_target(render_target)
         , _base_index(base_index)
         , _rectangle(std::move(rectangle))

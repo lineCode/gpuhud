@@ -1,8 +1,4 @@
-/**
- * Derived from version of Arthur Sonzogni
- * Licence:
- *      * MIT
- */
+#include "Program.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -14,90 +10,104 @@
 
 #include "Program.h"
 
-
 using namespace std;
 using namespace glm;
 
 namespace gpugraph
 {
 
-    template<>
-    Program::Uniform<int>& Program::Uniform<int>::operator=(int const& value)
+    Program::Usage::Usage(Program& program)
+        : _program(program)
     {
-        glUniform1i(_loc, value);
-        _value = value;
-        return *this;
+        _program.bind();
+        for(auto index : _program._attributes)
+            glEnableVertexAttribArray(index);
     }
 
-    template<>
-    Program::Uniform<float>& Program::Uniform<float>::operator=(float const& value)
+    Program::Usage::~Usage()
     {
-        glUniform1f(_loc, value);
-        _value = value;
-        return *this;
+        for(auto index : _program._attributes)
+            glDisableVertexAttribArray(index);
+        _program.release();
     }
 
-    template<>
-    Program::Uniform<vec3>& Program::Uniform<vec3>::operator=(vec3 const& value)
+    Program::Usage Program::use()
     {
-        glUniform3fv(_loc, 1, value_ptr(value));
-        _value = value;
-        return *this;
+        return Usage(*this);
     }
 
-    template<>
-    Program::Uniform<mat3>& Program::Uniform<mat3>::operator=(mat3 const& value)
+    class Program::Attribute::Implementation
     {
-        glUniformMatrix3fv(_loc, 1, GL_FALSE, value_ptr(value));
-        _value = value;
-        return *this;
+    public:
+        Implementation(Program&, std::string const&);
+        GLuint index() const;
+    private:
+        GLuint _index;
+    };
+
+    Program::Attribute::Attribute(Program* program, std::string  name)
+        : _name(std::move(name))
+        , _pimpl(std::make_shared<Implementation>(*program, _name))
+    {
     }
 
-    template<>
-    Program::Uniform<mat4>& Program::Uniform<mat4>::operator=(mat4 const& value)
+    GLuint Program::Attribute::index() const
     {
-        glUniformMatrix4fv(_loc, 1, GL_FALSE, value_ptr(value));
-        _value = value;
-        return *this;
+        return _pimpl->index();
     }
 
-    std::string read_file(const char* filename) 
+    void Program::Attribute::set(GLint size, GLenum type, bool normalized, std::size_t stride, std::size_t offset)
     {
-        std::ifstream file(filename, std::ios_base::binary);
-        std::string buffer;
-        if (!file.good())
-        {
-            throw std::invalid_argument(string("The file ") + filename +
-                " doesn't exists");
-        }
-        file.seekg(0, std::ios_base::end);
-        std::streamsize size = file.tellg();
-        file.seekg(0, std::ios_base::beg);
-        buffer.resize(static_cast<std::size_t>(size));
-        file.read(&buffer[0], size);
-        buffer += '\0';
-        return buffer;
+        auto temp = static_cast<GLintptr>(offset);
+        glVertexAttribPointer(index(), 
+            size, 
+            type, 
+            normalized ? GL_TRUE : GL_FALSE, 
+            static_cast<GLsizei>(stride),
+            reinterpret_cast<GLvoid *>(temp));
     }
 
-    Program::Shader::Shader(std::string source, GLenum type) 
+    Program::Attribute::Implementation::Implementation(Program& program, std::string const& name)
     {
-        _handle = glCreateShader(type);
-        if (_handle == 0)
-            throw std::runtime_error("[Error] Impossible to create a new Shader");
+        program.bind();
+        _index = program.attribute(name);
+        program._attributes.push_back(_index);
+    }
 
-        auto text = reinterpret_cast<const GLchar*>(&source[0]);
-        glShaderSource(_handle, 1, &text, NULL);
+    GLuint Program::Attribute::Implementation::index() const
+    {
+        return _index;
+    }
 
-        glCompileShader(_handle);
+
+    Program::Shader::Shader(std::string source, GLenum type)
+        : _source(std::move(source))
+        , _type(type)
+    {
+    }
+
+    void Program::Shader::compile()
+    {
+        if (_handle)
+            return;
+
+        GLuint handle = glCreateShader(_type);
+        if (handle == 0)
+            throw std::runtime_error("failed to create shader");
+
+        auto text = reinterpret_cast<const GLchar*>(&_source[0]);
+        glShaderSource(handle, 1, &text, NULL);
+
+        glCompileShader(handle);
 
         GLint compile_status;
-        glGetShaderiv(_handle, GL_COMPILE_STATUS, &compile_status);
+        glGetShaderiv(handle, GL_COMPILE_STATUS, &compile_status);
         if (compile_status != GL_TRUE) {
             GLsizei logsize = 0;
-            glGetShaderiv(_handle, GL_INFO_LOG_LENGTH, &logsize);
+            glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &logsize);
 
-            char* log = new char[logsize + 1];
-            glGetShaderInfoLog(_handle, logsize, &logsize, log);
+            char* log = new char[static_cast<std::size_t>(logsize) + 1];
+            glGetShaderInfoLog(handle, logsize, &logsize, log);
 
             // TODO: throw with designed exception
             std::cout << "failed to compile shader: " << endl;
@@ -107,13 +117,22 @@ namespace gpugraph
         }
         else 
         {
+            _handle = handle;
             std::cout << "[Info] Shader compiled successfully" << endl;
         }
     }
 
-    GLuint Program::Shader::handle() const 
+    GLuint Program::Shader::handle() 
     {
-        return _handle;
+        if (!_handle)
+            compile();
+        return _handle.value();
+    }
+
+    Program::Shader::Shader(const Shader& shader)
+        : _source(shader._source)
+        , _type(shader._type)
+    {
     }
 
     Program::Shader::~Shader() {}
@@ -153,17 +172,10 @@ namespace gpugraph
 
     GLint Program::uniform(const std::string& name) 
     {
-        auto it = _uniforms.find(name);
-        if (it == _uniforms.end()) 
-        {
-            GLint r = glGetUniformLocation(_handle, name.c_str());
-            if (r == GL_INVALID_OPERATION || r < 0)
-                throw std::runtime_error("uniform " + name + " doesn't exist");
-            _uniforms[name] = r;
-            return r;
-        }
-        else
-            return it->second;
+        GLint r = glGetUniformLocation(_handle, name.c_str());
+        if (r == GL_INVALID_OPERATION || r < 0)
+            throw std::runtime_error("uniform " + name + " doesn't exist");
+        return r;
     }
 
     GLint Program::attribute(const std::string& name) {
@@ -172,13 +184,6 @@ namespace gpugraph
             cout << "[Error] Attribute " << name << " doesn't exist in program" << endl;
 
         return attrib;
-    }
-
-    void Program::set_attribute(const std::string& name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset)
-    {
-        GLint loc = attribute(name);
-        glEnableVertexAttribArray(loc);
-        glVertexAttribPointer(loc, size, type, normalized, stride, reinterpret_cast<void*>(offset));
     }
 
     Program::~Program() 
@@ -196,9 +201,44 @@ namespace gpugraph
         glUseProgram(0);
     }
 
-    GLuint Program::handle() const 
+    Program::FragmentShader::FragmentShader(std::string source)
+        : Shader(std::move(source), GL_FRAGMENT_SHADER)
     {
-        return _handle;
+    }
+
+    Program::VertexShader::VertexShader(std::string source)
+        : Shader(std::move(source), GL_VERTEX_SHADER)
+    {
+    }
+
+    template<>
+    void Program::Uniform<int>::Implementation::assign(int const& value)
+    {
+        glUniform1i(_loc, value);
+    }
+
+    template<>
+    void Program::Uniform<float>::Implementation::assign(float const& value)
+    {
+        glUniform1f(_loc, value);
+    }
+
+    template<>
+    void Program::Uniform<glm::vec3>::Implementation::assign(glm::vec3 const& value)
+    {
+        glUniform3fv(_loc, 1, glm::value_ptr(value));
+    }
+
+    template<>
+    void Program::Uniform<glm::mat3>::Implementation::assign(glm::mat3 const& value)
+    {
+        glUniformMatrix3fv(_loc, 1, GL_FALSE, glm::value_ptr(value));
+    }
+
+    template<>
+    void Program::Uniform<glm::mat4>::Implementation::assign(glm::mat4 const& value)
+    {
+        glUniformMatrix4fv(_loc, 1, GL_FALSE, glm::value_ptr(value));
     }
 
 }
