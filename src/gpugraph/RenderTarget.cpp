@@ -231,14 +231,15 @@ namespace gpugraph
     
     void RenderTarget::Tile::render(std::function<void()> f)
     {
-        glDisable(GL_TEXTURE_2D);
+        //glDisable(GL_TEXTURE_2D);
         glDisable(GL_DEPTH_TEST);
         auto fbo_id = _render_target->_framebuffer_objects.at(_base_index);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
         glViewport(0, 0,
             static_cast<GLsizei>(_rectangle.width()),
             static_cast<GLsizei>(_rectangle.height()));
-        glClearColor(0.1f, 0.2f, 0.0, 0.0f);
+        glClearColor(1.0f, 0.2f, 0.0, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         f();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
@@ -254,16 +255,13 @@ namespace gpugraph
         program.position.set(2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
         program.texture_coord.set(2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, sizeof(float) * 2);
 
+
         glActiveTexture(GL_TEXTURE0);
-        glEnable(GL_TEXTURE_2D);
         auto texture_id = _render_target->_texture_attachments.at(_base_index);
         glBindTexture(GL_TEXTURE_2D, texture_id);
+        glDrawArrays(GL_TRIANGLE_STRIP, static_cast<GLint>(_base_index) * 4, 4);        
 
-        glDrawArrays(GL_TRIANGLE_STRIP, static_cast<GLint>(_base_index) * 4, 4);
-
-        glDisable(GL_TEXTURE_2D);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     RenderTarget::Tile::Tile(RenderTarget* render_target, std::size_t base_index, rect rectangle)

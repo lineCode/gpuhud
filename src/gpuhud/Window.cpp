@@ -52,60 +52,45 @@ namespace gpuhud
 
         _subsystem_window->make_current();
 
+        bool first = true;
         while (!_subsystem_window->is_closed())
         {
             auto width = _subsystem_window->width();
             auto height = _subsystem_window->height();
             root_node->set_width(width | px);
             root_node->set_height(height | px);
+
+            glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
             root_node->intermediate()->set_size(width, height);
+            glPopClientAttrib();
+
             auto const& tiles = root_node->intermediate()->render_target().tiles();
+
+            static float deg = 0.f;
             for (auto& tile : tiles)
             {
                 tile->render([&]() {
-
                     auto& surface = gpugraph::Context::current().skia_surface();
                 	SkCanvas* canvas = surface.getCanvas(); // We don't manage this pointer's lifetime.
-
-                    auto w = tile->rectangle().width();
-                    auto h = tile->rectangle().height();
-                    glMatrixMode(GL_PROJECTION);
-                    glPushMatrix();
-                    glLoadIdentity();
-                    glOrtho(0, w, h, 0, 1., -1.);
-                    glMatrixMode(GL_MODELVIEW);
-                    glPushMatrix();
-                    glLoadIdentity();
-
-                    glBegin(GL_TRIANGLES);
-                    glColor3f(1.0f, 0.0f, 0.0f); glVertex2f(w-100.f, 50.f);
-                    glColor3f(0.0f, 1.0f, 0.0f); glVertex2f(w-50.f, 50.f);
-                    glColor3f(0.0f, 0.0f, 1.0f); glVertex2f(w-50.f, 100.f);
-                    glEnd();
-
-		            /*SkPaint paint;
+                    SkPaint paint;
 		            paint.setColor(SK_ColorWHITE);
 		            canvas->drawPaint(paint);
-		            paint.setColor(SK_ColorBLUE);
-		            canvas->drawRect({10, 10, 20, 20}, paint);
-                    */
-
-                    glPopMatrix();
-                    glMatrixMode(GL_PROJECTION);
-                    glPopMatrix();
-                    glMatrixMode(GL_MODELVIEW);
+                    canvas->rotate(deg);
+                    deg += 0.01f;
+		            paint.setColor(SK_ColorRED);
+		            canvas->drawRect({-100, -100, 100, 100}, paint);
+		            canvas->drawRect({-0.2, -0.2, 0.2, 0.2}, paint);
                 });
             }
+            
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            glPushAttrib(GL_ENABLE_BIT);
+            glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
             glViewport(0, 0, width, height);
             glClearColor(0.0, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            if (_debug_draw_intermediate)
-                _draw_intermediate();
-
-            // will move this ..
             auto& intermediate = *this->root_node()->intermediate();
             auto mat = glm::ortho(
                 static_cast<float>(0),
@@ -114,7 +99,11 @@ namespace gpuhud
                 static_cast<float>(0)
             );
             intermediate.render_target().blit(mat);
+            glPopClientAttrib();
+            glPopAttrib();
 
+            //if (_debug_draw_intermediate)
+            //    _draw_intermediate();
 
             _subsystem_window->swap_buffers();
             _subsystem_window->poll_events();

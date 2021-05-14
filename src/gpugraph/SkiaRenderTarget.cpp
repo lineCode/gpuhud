@@ -28,16 +28,15 @@ namespace gpugraph
     {
         auto& context = Context::current().skia_context();
 
-
-	    GrGLFramebufferInfo framebufferInfo;
+        GrGLFramebufferInfo framebufferInfo;
         framebufferInfo.fFBOID = render_target->framebuffer_objects().at(base_index);
         framebufferInfo.fFormat = GL_RGBA8;
 
 	    SkColorType colorType = kRGBA_8888_SkColorType;
 	    GrBackendRenderTarget backendRenderTarget(
             static_cast<int>(rectangle().width()), 
-            static_cast<int>(rectangle().height()), 
-		    0, // sample count
+            static_cast<int>(rectangle().height()),
+		    0, // sample count (multi-sampled)
 		    0, // stencil bits
 		    framebufferInfo);
 
@@ -49,10 +48,21 @@ namespace gpugraph
 
     void SkiaRenderTarget::SkiaTile::render(std::function<void()> f)
     {
+        // glDisable(GL_TEXTURE_2D);
+        // glDisable(GL_DEPTH_TEST);
+        auto fbo_id = _render_target->framebuffer_objects().at(_base_index);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
+        glViewport(0, 0,
+            static_cast<GLsizei>(_rectangle.width()),
+            static_cast<GLsizei>(_rectangle.height()));
         auto& context = Context::current();
         context._skia_surface = _surface.get();
-        Tile::render(std::move(f));
+        _surface->getCanvas()->save();
+        _surface->getCanvas()->clear(SK_ColorWHITE);
+        f();
+        _surface->getCanvas()->restore();
         context.skia_context().flush();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
    }
 
 }
