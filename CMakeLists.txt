@@ -51,7 +51,7 @@ add_library(lib_gpugraph
   "src/gpugraph/Intermediate.cpp"  
   "src/gpugraph/Program.cpp"
   "src/gpugraph/util.cpp"
-  "src/gpugraph/SkiaRenderTarget.cpp" "src/gpugraph/Loader.cpp")
+  "src/gpugraph/SkiaRenderTarget.cpp" "src/gpugraph/XmlLoader.cpp")
 target_include_directories(lib_gpugraph PUBLIC extern/skia)
 target_include_directories(lib_gpugraph PUBLIC extern/skia/out/Release/gen)
 target_include_directories(lib_gpugraph PUBLIC src/)

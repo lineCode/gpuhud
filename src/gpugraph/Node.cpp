@@ -40,6 +40,34 @@ namespace gpugraph
         }), _children.end());
     }
 
+    Node& Node::set_id(std::string value)
+    {
+        _id = std::move(value);
+        return *this;
+    }
+
+    std::string const& Node::id() const
+    {
+        return _id;
+    }
+
+    Node& Node::add_class(std::string class_)
+    {
+        _class_set.insert(std::move(class_));
+        return *this;
+    }
+
+    Node& Node::remove_class(std::string const& class_)
+    {
+        _class_set.erase(class_);
+        return *this;
+    }
+
+    std::set<std::string> const& Node::class_set() const
+    {
+        return _class_set;
+    }
+
     Node& Node::set_force_intermediate(bool value)
     {
         _force_intermediate = value;

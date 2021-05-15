@@ -3,7 +3,7 @@
 #include <string>
 #include <regex>
 
-namespace oogui
+namespace gpugraph
 {
 
     inline void ltrim(std::string& s) {
@@ -23,33 +23,40 @@ namespace oogui
         rtrim(s);
     }
 
-    inline std::string ltrim_copy(std::string s) {
-        ltrim(s);
-        return s;
+    inline std::string ltrimmed(std::string const& s) {
+        auto r = s;
+        ltrim(r);
+        return r;
     }
 
-    inline std::string rtrim_copy(std::string s) {
-        rtrim(s);
-        return s;
+    inline std::string rtrimmed(std::string const& s) {
+        auto r = s;
+        rtrim(r);
+        return r;
     }
 
-    inline std::string trim_copy(std::string s) {
-        trim(s);
-        return s;
+    inline std::string trimmed(std::string s) {
+        auto r = s;
+        trim(r);
+        return r;
     }
 
-    inline std::vector<std::string> tokenize(std::string const& input, std::string const& regex, int sup = -1) 
+    inline std::vector<std::string> tokenize(std::string const& input, std::string const& regex, int sup=-1)
     {
         std::regex re(regex);
-        std::sregex_token_iterator first{ input.begin(), input.end(), re, sup }, last;
-        return { first, last };
+        std::sregex_token_iterator rit{ input.begin(), input.end(), re, sup }, last;
+        std::vector<std::string> tokens;
+        std::remove_copy_if(rit, std::sregex_token_iterator(), std::back_inserter(tokens),
+                    [](std::string const &s) { return s.empty(); });
+        return tokens;
     }
 
-    inline bool ends_with(std::string const &str, std::string const &ending) 
+    inline bool ends_with(std::string const& str, std::string const& ending)
     {
         if (str.length() >= ending.length()) {
-            return (0 == str.compare (str.length() - ending.length(), ending.length(), ending));
-        } else {
+            return (0 == str.compare(str.length() - ending.length(), ending.length(), ending));
+        }
+        else {
             return false;
         }
     }
