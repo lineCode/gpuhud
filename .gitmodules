@@ -10,3 +10,6 @@
 [submodule "extern/depot_tools"]
 	path = extern/depot_tools
 	url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
+[submodule "extern/tinyxml2"]
+	path = extern/tinyxml2
+	url = https://github.com/leethomason/tinyxml2.git
