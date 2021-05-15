@@ -28,25 +28,9 @@ add_library(tinyxml2 "extern/tinyxml2/tinyxml2.cpp")
 target_include_directories(tinyxml2 PUBLIC extern/tinyxml2/)
 
 #
-# google test
-# Download and unpack googletest at configure time
-configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
-execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download"
-)
-execute_process(COMMAND "${CMAKE_COMMAND}" --build .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download"
-)
-
-# Prevent GoogleTest from overriding our compiler/linker options
-# when building with Visual Studio
+# googletest
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-# Add googletest directly to our build. This adds the following targets:
-# gtest, gtest_main, gmock and gmock_main
-add_subdirectory("${CMAKE_BINARY_DIR}/googletest-src"
-                 "${CMAKE_BINARY_DIR}/googletest-build"
-)
+add_subdirectory(extern/googletest)
 
 # The gtest/gmock targets carry header search path dependencies
 # automatically when using CMake 2.8.11 or later. Otherwise we
@@ -88,6 +72,8 @@ add_library(lib_gpuhud
 target_include_directories(lib_gpuhud PUBLIC src/)
 target_link_libraries(lib_gpuhud PUBLIC lib_gpugraph)
 set_property(TARGET lib_gpuhud PROPERTY CXX_STANDARD 17)
+
+add_subdirectory(tests)
 
 add_executable(window_create "examples/window/main.cpp" "src/gpugraph/RenderTarget.cpp" "src/gpugraph/Node.h" "src/gpuhud/Widget.cpp" "src/gpugraph/Context.h" "src/gpugraph/Context.cpp"  "src/gpuhud/Container.h")
 target_link_libraries(window_create PRIVATE lib_gpuhud glad glm)
