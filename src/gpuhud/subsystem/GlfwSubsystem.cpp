@@ -85,6 +85,20 @@ namespace gpuhud
         glfwSetWindowTitle(_window.get(), title.c_str());
     }
 
+    double GlfwSubsystem::GlfwWindow::get_dpi() const
+    {
+        // this was party taken from here:
+        // https://www.glfw.org/docs/3.0/monitor.html
+        auto monitor = glfwGetWindowMonitor(_window.get());
+        if (monitor == nullptr)
+            monitor = glfwGetPrimaryMonitor();
+        int width, height;
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        glfwGetMonitorPhysicalSize(monitor, &width, &height);
+        // 25,4 = one inch in [mm]
+        return mode->width / (width / 25.4);
+    }
+
     std::shared_ptr<Subsystem> GlfwSubsystem::instance()
     {
         static std::weak_ptr<Subsystem> instance;

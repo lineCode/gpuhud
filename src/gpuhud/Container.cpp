@@ -2,6 +2,11 @@
 
 namespace gpuhud
 {
+    Container::Container()
+        : Widget()
+        , _content_node(root_node())
+    {
+    }
 
     void Container::add(std::shared_ptr<Widget> widget)
     {

@@ -1,66 +1,99 @@
 #pragma once
-#include <variant>
 
+#include <cstdint>
+#include <variant>
+#include "types.h"
 
 namespace gpugraph
 {
 
     //
-    // box-sizing
-
-    struct ContentBox {};
-    struct BorderBox {};
-
-    inline auto const content_box = ContentBox();
-    inline auto const border_box = BorderBox();
-
-    //
-    // width
-
-    struct Automatic {};
-    struct MinWidth {};
-    struct MaxWidth {};
-
-    struct Pixels { struct Suffix {}; float value; };
-    struct Percentage { struct Suffix {}; float value; };
-    struct Em { struct Suffix {}; float value; };
-    struct Rem { struct Suffix {}; float value; };
-
-    inline static Automatic const auto_ = Automatic{};
-    inline static Pixels::Suffix const px = Pixels::Suffix{};
-    inline static Percentage::Suffix const percent = Percentage::Suffix{};
-
-    using Sizing = std::variant<Automatic, MinWidth, MaxWidth, Pixels, Percentage, Em, Rem>;
-
-    template<typename T>
-    Sizing operator |(T value, Pixels::Suffix const&)
+    // <length>
+    struct Length
     {
-        return Pixels{ static_cast<float>(value) };
-    }
+        enum class Unit : std::uint8_t
+        {
+            FontSize = 0,
+            RootFontSize = 1,
+            HeightOfLowerLetterX = 2,
+            CharacterHorizontal = 3 /*of '0'*/,
+            ViewportWidth = 4,
+            ViewportHeight = 5,
+            ViewportMin = 6,
+            ViewportMax = 7,
+            Pixel = 8,
+            Centimeter = 9,
+            Millimeter = 10,
+            Inch = 11,
+            Pica = 12,
+            Point = 13
+        };
+        inline static auto const px = Unit::Pixel;
+        inline static auto const mm = Unit::Millimeter;
+        inline static auto const cm = Unit::Centimeter;
+        inline static auto const in = Unit::Inch;
+        inline static auto const pc = Unit::Pica;
+        inline static auto const pt = Unit::Point;
 
-    template<typename T>
-    Sizing operator |(T value, Percentage::Suffix const&)
-    {
-        return Percentage{ static_cast<float>(value) };
-    }
+        inline static auto const vw = Unit::ViewportWidth;
+        inline static auto const vh = Unit::ViewportHeight;
+        inline static auto const vmin = Unit::ViewportMin;
+        inline static auto const vmax = Unit::ViewportMax;
 
-    template<typename T>
-    Sizing operator |(T value, Em::Suffix const&)
-    {
-        return Em{ static_cast<float>(value) };
-    }
+        inline static auto const em = Unit::FontSize;
+        inline static auto const rem = Unit::RootFontSize;
+        inline static auto const ex = Unit::HeightOfLowerLetterX;
+        inline static auto const ch = Unit::CharacterHorizontal;
 
-    struct Flex
-    {
-        std::tuple<std::variant<Automatic, Sizing>> value;
+        Unit unit = Unit::Pixel;
+        real_t value = real_t(0);
     };
 
+    template<typename T>
+    Length operator |(T value, Length::Unit unit)
+    {
+        return Length{ unit, static_cast<float>(value) };
+    }
+
     //
-    // only support static / absolute for now..
+    // css: %
+    struct Percentage
+    {
+        real_t value = real_t(0);
+    };
+
+    inline static auto const percentage = Percentage{ real_t(1) };
+
+    //
+    // css: width, height
+    enum class SizingKeyword
+    {
+        Automatic,
+        Inherit,
+        Unset,
+
+        BorderBox,
+        ContentBox,
+        MaxContent,
+        MinContent,
+        Available,
+        FitContent
+    };
+
+    using Sizing = std::variant<SizingKeyword, Length>;
+
+    //
+    // css: position
     enum class Position
     {
-        Static = 0,
-        Absolute = 1
+        Absolute,
+        Static
+    };
+
+    enum class Display
+    {
+        Flex,
+        Inline
     };
 
 }

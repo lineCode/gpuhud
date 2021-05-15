@@ -43,12 +43,12 @@ set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 17)
 add_library(lib_gpuhud
   "src/gpuhud/subsystem/GlfwSubsystem.cpp"
   "src/gpuhud/Window.cpp"
-  
+  "src/gpuhud/ChildWindow.cpp"
   "src/gpuhud/Widget.cpp"
   "src/gpuhud/Container.cpp")
 target_include_directories(lib_gpuhud PUBLIC src/)
 target_link_libraries(lib_gpuhud PUBLIC lib_gpugraph)
 set_property(TARGET lib_gpuhud PROPERTY CXX_STANDARD 17)
 
-add_executable(window_create "examples/window/main.cpp" "src/gpugraph/RenderTarget.cpp" "src/gpugraph/Node.h" "src/gpuhud/Widget.cpp" "src/gpugraph/Context.h" "src/gpugraph/Context.cpp" "src/gpugraph/attributes.h" "src/gpuhud/Container.h")
+add_executable(window_create "examples/window/main.cpp" "src/gpugraph/RenderTarget.cpp" "src/gpugraph/Node.h" "src/gpuhud/Widget.cpp" "src/gpugraph/Context.h" "src/gpugraph/Context.cpp"  "src/gpuhud/Container.h")
 target_link_libraries(window_create PRIVATE lib_gpuhud glad glm)

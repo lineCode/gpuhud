@@ -2,6 +2,14 @@
 #include "Node.h"
 #include "Node.h"
 #include "Node.h"
+#include "Node.h"
+#include "Node.h"
+#include "Node.h"
+#include "Node.h"
+#include "Node.h"
+#include "Node.h"
+#include "Node.h"
+#include "Node.h"
 #include "NodeState.h"
 #include "Intermediate.h"
 
@@ -13,9 +21,16 @@ namespace gpugraph
     {
     }
 
+    std::shared_ptr<Node> Node::create()
+    {
+        return std::shared_ptr<Node>(new Node());
+    }
+
     void Node::add(std::shared_ptr<Node> node)
     {
-        _children.push_back(std::move(node));
+        _children.push_back(node);
+        node->_parent = this;
+        node->compute_content_properties(true);
     }
 
     void Node::remove(std::shared_ptr<Node> const& node)
@@ -38,6 +53,28 @@ namespace gpugraph
         return _force_intermediate;
     }
 
+    Node& Node::set_font(std::shared_ptr<SkFont> value)
+    {
+        _font = std::move(value);
+        return *this;
+    }
+
+    std::shared_ptr<SkFont> Node::font() const
+    {
+        return _font;
+    }
+
+    Node& Node::set_display(Display value)
+    {
+        _display = value;
+        return *this;
+    }
+
+    Display Node::display() const
+    {
+        return _display;
+    }
+
     Node& Node::set_visible(bool value)
     {
         _visible = value;
@@ -47,6 +84,17 @@ namespace gpugraph
     bool Node::visible() const
     {
         return _visible;
+    }
+
+    Node& Node::set_position(Position position)
+    {
+        _position = position;
+        return *this;
+    }
+
+    Position Node::position() const
+    {
+        return _position;
     }
 
     Node& Node::set_width(Sizing value)
@@ -159,17 +207,6 @@ namespace gpugraph
         return _right;
     }
 
-    Node& Node::set_flex(Flex value)
-    {
-        _flex = std::move(value);
-        return *this;
-    }
-
-    Flex const& Node::flex() const
-    {
-        return _flex;
-    }
-
     Node& Node::set_opacity(float value)
     {
         _opacity = value;
@@ -197,8 +234,34 @@ namespace gpugraph
         return _intermediate;
     }
 
+    void Node::accept(StateVisitor visitor)
+    {
+        if (visitor(*this, *_state))
+            for (auto& child : _children)
+                accept(visitor);
+    }
+
     void Node::compute_content_properties(bool recursive)
     {
+        if (recursive)
+        {
+            for (auto& child : _children)
+                child->compute_content_properties(true);
+        }
+        //
+        // throughts/interpretation (css):
+        // normally, text as content is a one-liner. min-content & max-content & content of 
+        // text is the same. if width is set to any "content"-property, it'll become a 
+        // one-liner. if width is set with px or .. it depends on "word-wrap".
+        // For this, we may use the Skia-Paragraph-Builder..?
+        //
+        // consequence: 
+        //   we need to compute the text width (and height) here of any text-content.
+        //   setting min-width etc. explicitely will override the computed one.
+
+        //
+        // todo: set root font, calc rem
     }
 
 }
+

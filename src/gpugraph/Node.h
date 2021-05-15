@@ -8,6 +8,7 @@
 
 #include "types.h"
 #include "attributes.h"
+#include "Context.h"
 
 namespace gpugraph
 {
@@ -21,13 +22,13 @@ namespace gpugraph
     // should look and act and it's relationships.
     // The engine will then compute the real appearance
     // and save it to the `Node::State`.
-    class Node
+    class Node : public std::enable_shared_from_this<Node>
     {
     public:
         class State;
 
-        Node();
         virtual ~Node() = default;
+        static std::shared_ptr<Node> create();
 
         void add(std::shared_ptr<Node>);
         void remove(std::shared_ptr<Node> const&);
@@ -35,8 +36,17 @@ namespace gpugraph
         Node& set_force_intermediate(bool);
         bool force_intermediate() const;
 
+        Node& set_font(std::shared_ptr<SkFont>);
+        std::shared_ptr<SkFont> font() const;
+
+        Node& set_display(Display);
+        Display display() const;
+
         Node& set_visible(bool);
         bool visible() const;
+
+        Node& set_position(Position);
+        Position position() const;
 
         Node& set_width(Sizing);
         Sizing const& width() const;
@@ -56,6 +66,7 @@ namespace gpugraph
         Node& set_height(Sizing);
         Sizing const& height() const;
 
+
         Node& set_left(Sizing);
         Sizing const& left() const;
 
@@ -68,8 +79,8 @@ namespace gpugraph
         Node& set_right(Sizing);
         Sizing const& right() const;
 
-        Node& set_flex(Flex);
-        Flex const& flex() const;
+/*        Node& set_flex(Flex);
+        Flex const& flex() const;*/
 
         Node& set_opacity(float);
         float opacity() const;
@@ -94,6 +105,12 @@ namespace gpugraph
 
         std::shared_ptr<Intermediate> const& intermediate() const;
 
+        using StateVisitor = std::function<bool(Node&, Node::State&)>;
+        void accept(StateVisitor);
+
+    protected:
+        Node();
+
     private:
         bool _layout_changed = true;
 
@@ -105,22 +122,22 @@ namespace gpugraph
 
         //
         // sizing & visibility
-        bool _visible;
+        Display _display; // e. g. the type of node
+        Position _position = Position::Static;
+        bool _visible = true;
+        real_t _opacity = 1.f;
+        std::shared_ptr<SkFont> _font;
 
-        float _opacity;
-
-        Sizing _width;
-        Sizing _min_width;
-        Sizing _max_width;
-        Sizing _height;
-        Sizing _min_height;
-        Sizing _max_height;
-        Sizing _left;
-        Sizing _top;
-        Sizing _bottom;
-        Sizing _right;
-
-        Flex _flex;
+        Sizing _width = SizingKeyword::Unset;
+        Sizing _min_width = SizingKeyword::Unset;
+        Sizing _max_width = SizingKeyword::Unset;
+        Sizing _height = SizingKeyword::Unset;
+        Sizing _min_height = SizingKeyword::Unset;
+        Sizing _max_height = SizingKeyword::Unset;
+        Sizing _left = SizingKeyword::Unset;
+        Sizing _top = SizingKeyword::Unset;
+        Sizing _bottom = SizingKeyword::Unset;
+        Sizing _right = SizingKeyword::Unset;
 
         vec4 _margin;
         vec4 _padding;
@@ -142,7 +159,7 @@ namespace gpugraph
 
         //
         // algorithms
-        void compute_content_properties(bool recursive=true);
+        void compute_content_properties(bool recursive);
     };
 
 }

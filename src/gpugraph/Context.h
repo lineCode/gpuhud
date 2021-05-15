@@ -8,6 +8,8 @@
 #include <skia.h>
 #pragma warning(pop)
 
+#include "attributes.h"
+
 namespace gpugraph
 {
 
@@ -27,6 +29,9 @@ namespace gpugraph
 
         // get skia surface
         SkSurface& skia_surface();
+
+        /// convert length to pixel
+        real_t to_real(Length const&) const;
 
     private:
         friend class SkiaRenderTarget;

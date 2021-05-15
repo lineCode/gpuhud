@@ -26,15 +26,18 @@ namespace gpugraph
         real_t width = 0; // [px]
         real_t height = 0; // [px]
 
-        real_t width_content; // [px]
+        /*
         real_t width_min_content; // [px]
         real_t width_max_content; // [px]
 
-        real_t height_content; // [px]
         real_t height_min_content; // [px]
         real_t height_max_content; // [px]
+        */
 
         std::shared_ptr<SkFont> font;
+
+        bool layout_dirty = true;
+        bool needs_redraw = true;
 
         void reset();
     };

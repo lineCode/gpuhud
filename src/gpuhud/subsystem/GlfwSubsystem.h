@@ -44,6 +44,8 @@ namespace gpuhud
         
         void set_title(std::string const&) override;
 
+        double get_dpi() const override;
+
     private:
         mutable std::shared_ptr<GLFWwindow> _window;
     };

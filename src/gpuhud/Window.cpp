@@ -11,6 +11,7 @@
 #include "subsystem/GlfwSubsystem.h"
 
 #include <gpugraph/Intermediate.h>
+#include <gpugraph/attributes.h>
 
 void GLAPIENTRY
 MessageCallback(GLenum source,
@@ -28,7 +29,6 @@ MessageCallback(GLenum source,
 
 namespace gpuhud
 {
-
     Window::Window(std::uint32_t width, std::uint32_t height, std::shared_ptr<Subsystem> subsystem)
         : _subsystem(subsystem ? _subsystem : GlfwSubsystem::instance())
         , _subsystem_window(_subsystem->create_window("gpuhud", width, height))
@@ -36,8 +36,16 @@ namespace gpuhud
     {
         _context.make_current();
 
-        auto root_node = std::make_shared<gpugraph::Node>();
-        set_root_node(root_node);
+        using gpugraph::Length;
+        std::cout << "size: " << sizeof(100 | Length::px) << std::endl;
+        
+        auto root_node = this->root_node();
+        root_node->set_left(0 | Length::px);
+        root_node->set_top(0 | Length::px);
+        root_node->set_width(width | Length::px);
+        root_node->set_height(height | Length::px);
+        root_node->set_position(gpugraph::Position::Absolute);
+
         set_content_node(root_node);
         root_node->set_force_intermediate(true);
         // glEnable( GL_DEBUG_OUTPUT );
@@ -46,19 +54,24 @@ namespace gpuhud
 
     void Window::loop()
     {
-        using gpugraph::px;
+        using gpugraph::Length;
 
         auto& root_node = this->root_node();
-
         _subsystem_window->make_current();
+
+        auto dpi = _subsystem_window->get_dpi();
+        auto tf = SkTypeface::MakeFromName("Lucida Console", SkFontStyle::Normal());
+        auto default_font = std::make_shared<SkFont>(tf);
+        default_font->setSize(std::round(dpi / 5)); // "dpi == dots per 25,4[mm]"
+        root_node->set_font(default_font);
 
         bool first = true;
         while (!_subsystem_window->is_closed())
         {
             auto width = _subsystem_window->width();
             auto height = _subsystem_window->height();
-            root_node->set_width(width | px);
-            root_node->set_height(height | px);
+            root_node->set_width(width | Length::px);
+            root_node->set_height(height | Length::px);
 
             root_node->intermediate()->set_size(width, height);
 
@@ -70,23 +83,19 @@ namespace gpuhud
             {
                 tile->render([&]() {
                     auto& surface = gpugraph::Context::current().skia_surface();
-                	SkCanvas* canvas = surface.getCanvas(); // We don't manage this pointer's lifetime.
+                    SkCanvas* canvas = surface.getCanvas(); // We don't manage this pointer's lifetime.
                     SkPaint paint;
                     canvas->clear(SK_ColorWHITE);
-		            paint.setColor(SK_ColorCYAN);
+                    paint.setColor(SK_ColorCYAN);
                     {
                         SkPaint paint;
-                        //paint.setARGB(100, 100, 255, 255);
                         paint.setAntiAlias(true);
-                        auto tf = SkTypeface::MakeFromName("Arial", SkFontStyle::Normal());
-                        SkFont font(tf);
-                        font.setSize(100);
-                        canvas->drawSimpleText("GpuHud", 6, SkTextEncoding::kUTF8, 200, 100, font, paint);
+                        canvas->drawSimpleText("GpuHud", 6, SkTextEncoding::kUTF8, 200, 100, *root_node->font(), paint);
                     }
 
-                    canvas->rotate(deg, static_cast<SkScalar>(width/2), static_cast<SkScalar>(height/2));
-		            canvas->drawRect({300, 300, 
-                        static_cast<float>(width-300), static_cast<float>(height-300)}, paint);
+                    canvas->rotate(deg, static_cast<SkScalar>(width / 2), static_cast<SkScalar>(height / 2));
+                    canvas->drawRect({ 300, 300,
+                        static_cast<float>(width - 300), static_cast<float>(height - 300) }, paint);
                 });
             }
 
@@ -120,7 +129,7 @@ namespace gpuhud
             if (_frame_counter.increase())
             {
                 std::cout << _frame_counter.frames_per_second() << " fps "
-                << "(" << root_node->intermediate()->render_target().tiles().size() << " tiles)" << std::endl;
+                    << "(" << root_node->intermediate()->render_target().tiles().size() << " tiles)" << std::endl;
             }
         }
     }

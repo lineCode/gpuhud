@@ -15,9 +15,6 @@ namespace gpuhud
 
         std::shared_ptr<gpugraph::Node> const& root_node();
     
-    protected:
-        void set_root_node(std::shared_ptr<gpugraph::Node>);
-
     private:
         std::shared_ptr<gpugraph::Node> _root_node;
     };
