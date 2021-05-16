@@ -18,3 +18,12 @@ TEST(StringUtils, test_if_string_without_delimiter_gets_returned)
     auto result = gpugraph::tokenize(input, "\\s+");
     ASSERT_EQ(result.size(), 3);
 }
+
+TEST(StringUtils, test_tokrnize_css_selector1)
+{
+    std::string input = R"~(.c.as.qwe#qwe:hover)~";
+    auto result = gpugraph::tokenize(input, R"~("[\.#:][^\.#:]+")~", -1);
+    std::vector<std::string> x{".c", ".as", ".qwe", "#qwe", ":hover"};
+    ASSERT_EQ(result, x);
+}
+

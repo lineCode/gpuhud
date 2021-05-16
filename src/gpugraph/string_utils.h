@@ -44,7 +44,7 @@ namespace gpugraph
     inline std::vector<std::string> tokenize(std::string const& input, std::string const& regex, int sup=-1)
     {
         std::regex re(regex);
-        std::sregex_token_iterator rit{ input.begin(), input.end(), re, sup }, last;
+        std::sregex_token_iterator rit{ input.begin(), input.end(), re, sup };
         std::vector<std::string> tokens;
         std::remove_copy_if(rit, std::sregex_token_iterator(), std::back_inserter(tokens),
                     [](std::string const &s) { return s.empty(); });

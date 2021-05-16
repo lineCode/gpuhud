@@ -16,14 +16,15 @@
 namespace gpugraph
 {
 
-    Node::Node()
-        : _state(std::make_shared<State>())
+    Node::Node(std::string type)
+        : _type(std::move(type))
+        , _state(std::make_shared<State>())
     {
     }
 
-    std::shared_ptr<Node> Node::create()
+    std::shared_ptr<Node> Node::create(std::string type)
     {
-        return std::shared_ptr<Node>(new Node());
+        return std::shared_ptr<Node>(new Node(std::move(type)));
     }
 
     void Node::add(std::shared_ptr<Node> node)

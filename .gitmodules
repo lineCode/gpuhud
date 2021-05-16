@@ -16,3 +16,9 @@
 [submodule "extern/googletest"]
 	path = extern/googletest
 	url = https://github.com/google/googletest.git
+[submodule "external/spirit"]
+	path = external/spirit
+	url = https://github.com/boostorg/spirit
+[submodule "extern/spirit"]
+	path = extern/spirit
+	url = https://github.com/boostorg/spirit

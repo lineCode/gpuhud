@@ -28,7 +28,7 @@ namespace gpugraph
         class State;
 
         virtual ~Node() = default;
-        static std::shared_ptr<Node> create();
+        static std::shared_ptr<Node> create(std::string type="div");
 
         void add(std::shared_ptr<Node>);
         void remove(std::shared_ptr<Node> const&);
@@ -116,15 +116,18 @@ namespace gpugraph
         void accept(StateVisitor);
 
         std::size_t size() const;
+        
         std::shared_ptr<Node> at(std::size_t);
         std::shared_ptr<Node> const& at(std::size_t) const;
+        
         std::vector<std::shared_ptr<Node>>::const_iterator begin() const;
         std::vector<std::shared_ptr<Node>>::const_iterator end() const;
+
         std::vector<std::shared_ptr<Node>>::iterator begin();
         std::vector<std::shared_ptr<Node>>::iterator end();
 
     protected:
-        Node();
+        Node(std::string type);
 
     private:
         bool _layout_changed = true;
@@ -135,6 +138,7 @@ namespace gpugraph
         // intermediate rendering
         std::shared_ptr<Intermediate> _intermediate;
 
+        std::string _type;
         std::string _id;
         std::set<std::string> _class_set;
 
