@@ -62,7 +62,7 @@ namespace gpuhud
         auto dpi = _subsystem_window->get_dpi();
         auto tf = SkTypeface::MakeFromName("Lucida Console", SkFontStyle::Normal());
         auto default_font = std::make_shared<SkFont>(tf);
-        default_font->setSize(std::round(dpi / 5)); // "dpi == dots per 25,4[mm]"
+        default_font->setSize(std::round(dpi / 5.f)); // "dpi == dots per 25,4[mm]"
         root_node->set_font(default_font);
 
         bool first = true;

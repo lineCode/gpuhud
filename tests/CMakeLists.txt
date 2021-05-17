@@ -1,7 +1,0 @@
-file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)
-set(SOURCES ${TEST_SOURCES})
-add_executable(tests ${TEST_SOURCES} "gpugraph/TestStringUtils.cpp" "gpugraph/TestSpirit.cpp")
-add_test(NAME tests COMMAND oogui_tests)
-target_include_directories(tests PUBLIC ../extern/boost)
-target_link_libraries(tests PUBLIC gtest)
-target_link_libraries(tests PRIVATE lib_gpugraph)

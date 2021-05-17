@@ -25,7 +25,7 @@ namespace gpugraph
     class Node : public std::enable_shared_from_this<Node>
     {
     public:
-        class State;
+        struct State;
 
         virtual ~Node() = default;
         static std::shared_ptr<Node> create(std::string type="div");
