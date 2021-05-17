@@ -20,6 +20,10 @@ add_subdirectory(extern/glm EXCLUDE_FROM_ALL)
 
 #
 # skia (precompiled)
+include_directories(
+    extern/skia/out/Release/gen
+    extern/skia
+)
 link_directories(extern/skia/out/Release)
 
 #
@@ -41,39 +45,10 @@ if(CMAKE_VERSION VERSION_LESS 2.8.11)
     )
 endif()
 
-
-add_library(lib_gpugraph
-  "src/gpugraph/RenderTarget.cpp" 
-  "src/gpugraph/Node.cpp"
-  "src/gpugraph/NodeState.cpp"
-  "src/gpugraph/Context.cpp" 
-  "src/gpugraph/Context.cpp"
-  "src/gpugraph/Intermediate.cpp"  
-  "src/gpugraph/Program.cpp"
-  "src/gpugraph/util.cpp"
-  "src/gpugraph/SkiaRenderTarget.cpp" "src/gpugraph/XmlLoader.cpp" "src/gpugraph/NodeHash.cpp" "src/gpugraph/Selector.cpp")
-target_include_directories(lib_gpugraph PUBLIC extern/skia)
-target_include_directories(lib_gpugraph PUBLIC extern/skia/out/Release/gen)
-target_include_directories(lib_gpugraph PUBLIC src/)
-target_link_libraries(lib_gpugraph PUBLIC glad)
-target_link_libraries(lib_gpugraph PUBLIC glfw)
-target_link_libraries(lib_gpugraph PUBLIC glm)
-target_link_libraries(lib_gpugraph PUBLIC skia)
-target_link_libraries(lib_gpugraph PUBLIC ${OPENGL_LIBRARIES})
-target_link_libraries(lib_gpugraph PUBLIC tinyxml2)
-set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 17)
-
-add_library(lib_gpuhud
-  "src/gpuhud/subsystem/GlfwSubsystem.cpp"
-  "src/gpuhud/Window.cpp"
-  "src/gpuhud/ChildWindow.cpp"
-  "src/gpuhud/Widget.cpp"
-  "src/gpuhud/Container.cpp")
-target_include_directories(lib_gpuhud PUBLIC src/)
-target_link_libraries(lib_gpuhud PUBLIC lib_gpugraph)
-set_property(TARGET lib_gpuhud PROPERTY CXX_STANDARD 17)
+add_subdirectory(lib/gpugraph)
+add_subdirectory(lib/gpuhud)
 
 add_subdirectory(tests)
 
-add_executable(window_create "examples/window/main.cpp" "src/gpugraph/RenderTarget.cpp" "src/gpugraph/Node.h" "src/gpuhud/Widget.cpp" "src/gpugraph/Context.h" "src/gpugraph/Context.cpp"  "src/gpuhud/Container.h")
-target_link_libraries(window_create PRIVATE lib_gpuhud glad glm)
+# add_executable(window_create "examples/window/main.cpp" "lib/gpugraph/source/RenderTarget.cpp" "lib/gpugraph/source/Node.h" "lib/gpuhud/Widget.cpp" "lib/gpugraph/source/Context.h" "lib/gpugraph/source/Context.cpp"  "lib/gpuhud/Container.h")
+# target_link_libraries(window_create PRIVATE lib_gpuhud glad glm)

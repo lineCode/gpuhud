@@ -75,7 +75,7 @@ namespace gpugraph
         auto y1 = rectangle().y1;
         _surface->getCanvas()->translate(x1, y1);
         _surface->getCanvas()->drawRect(
-            SkRect::MakeLTRB( 0.5, 0.5, rectangle().width()-0.5, rectangle().height()-0.5),
+            SkRect::MakeLTRB( 0.5f, 0.5f, rectangle().width()-0.5f, rectangle().height()-0.5f),
             _debug_intermediate_paint);
         _surface->getCanvas()->translate(-x1, -y1);
 
