@@ -25,7 +25,7 @@ namespace gpuhud
         void loop();
 
         const std::string& title() const;
-        void Window::set_title(std::string);
+        void set_title(std::string);
 
         std::uint32_t width() const;
         std::uint32_t height() const;

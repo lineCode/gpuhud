@@ -18,7 +18,7 @@ add_library(
     
  "source/gpugraph/css/length.h" "source/gpugraph/css/grammar.h")
 
-set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 17)
+set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 20)
 
 target_include_directories(lib_gpugraph PUBLIC source/)
 

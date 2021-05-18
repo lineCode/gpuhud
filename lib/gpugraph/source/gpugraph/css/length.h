@@ -67,3 +67,24 @@ namespace gpugraph::css
     };
 
 }
+
+std::string to_string(gpugraph::css::Length length)
+{
+    static auto const unit = std::vector<std::string>{
+        "em",
+        "rem",
+        "ex",
+        "ch",
+        "vw",
+        "vh",
+        "vmin",
+        "vmax",
+        "px",
+        "cm",
+        "mm",
+        "in",
+        "pc",
+        "pt"
+    };
+    return "";
+}

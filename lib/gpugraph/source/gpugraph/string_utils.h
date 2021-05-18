@@ -2,6 +2,7 @@
 
 #include <string>
 #include <regex>
+#include <sstream>
 
 namespace gpugraph
 {
@@ -66,7 +67,7 @@ namespace gpugraph
         std::ostringstream os;
         std::string prefix;
         auto b = begin(elements), e = end(elements);
-        for (it = begin(elements); it != end(elements); ++it)
+        for (auto it = begin(elements); it != end(elements); ++it)
         {
             os << prefix << *it;
             prefix = delimiter;

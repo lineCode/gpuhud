@@ -6,6 +6,7 @@ add_executable(
     "source/TestGrammar.cpp"
     "source/main.cpp"
 )
+set_property(TARGET gpugraph_tests PROPERTY CXX_STANDARD 20)
 
 add_test(NAME gpugraph_tests COMMAND gpugraph_tests)
 
