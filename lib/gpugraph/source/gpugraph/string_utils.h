@@ -61,4 +61,17 @@ namespace gpugraph
         }
     }
 
+    template <typename Range, typename Value = typename Range::value_type>
+    std::string join(Range const& elements, const char *const delimiter) {
+        std::ostringstream os;
+        std::string prefix;
+        auto b = begin(elements), e = end(elements);
+        for (it = begin(elements); it != end(elements); ++it)
+        {
+            os << prefix << *it;
+            prefix = delimiter;
+        }
+        return os.str();
+    }
+
 }

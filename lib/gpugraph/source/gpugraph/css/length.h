@@ -1,14 +1,11 @@
 #pragma once
 
-#include <cstdint>
 #include <variant>
-#include "types.h"
 
-namespace gpugraph
+namespace gpugraph::css
 {
+    using real_t = float;
 
-    //
-    // <length>
     struct Length
     {
         enum class Unit : std::uint8_t
@@ -52,48 +49,21 @@ namespace gpugraph
     template<typename T>
     Length operator |(T value, Length::Unit unit)
     {
-        return Length{ static_cast<float>(value), unit };
+        return Length{ unit, static_cast<float>(value) };
     }
 
-    //
-    // css: %
-    struct Percentage
+    using Identifier = std::string;
+
+    class Selector
     {
-        real_t value = real_t(0);
-    };
-
-    inline static auto const percentage = Percentage{ real_t(1) };
-
-    //
-    // css: width, height
-    enum class SizingKeyword
-    {
-        Automatic,
-        Inherit,
-        Unset,
-
-        BorderBox,
-        ContentBox,
-        MaxContent,
-        MinContent,
-        Available,
-        FitContent
-    };
-
-    using Sizing = std::variant<SizingKeyword, Length>;
-
-    //
-    // css: position
-    enum class Position
-    {
-        Absolute,
-        Static
-    };
-
-    enum class Display
-    {
-        Flex,
-        Inline
+        enum class Combinator
+        {
+            Plus,
+            Tilde,
+            Greater
+        };
+        struct Universal;
+        std::variant<Universal, Identifier> type_selector;
     };
 
 }

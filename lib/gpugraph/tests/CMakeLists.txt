@@ -3,7 +3,7 @@ add_executable(
     gpugraph_tests 
     
     "source/TestStringUtils.cpp"
-    "source/TestSpirit.cpp"
+    "source/TestGrammar.cpp"
     "source/main.cpp"
 )
 
