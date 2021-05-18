@@ -62,7 +62,7 @@ namespace gpugraph::css
             Tilde,
             Greater
         };
-        struct Universal;
+        struct Universal {};
         std::variant<Universal, Identifier> type_selector;
     };
 
