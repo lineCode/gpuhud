@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <functional>
 
-#include <gpugraph/util.h>
+// #include <gpugraph/util.h>
 #include <gpugraph/Context.h>
 
 #include "Subsystem.h"
@@ -42,7 +42,7 @@ namespace gpuhud
         std::unique_ptr<Subsystem::Window> _subsystem_window;
         
         gpugraph::Context _context;
-        gpugraph::FrameCounter _frame_counter = gpugraph::FrameCounter();
+//        gpugraph::FrameCounter _frame_counter = gpugraph::FrameCounter();
     };
 
 }

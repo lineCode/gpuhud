@@ -43,15 +43,4 @@ namespace gpugraph
         return *_skia_surface;
     }
 
-    real_t Context::to_real(Length const& l) const
-    {
-        static auto convert = std::vector<std::function<real_t(Context const &, real_t)>>
-        {
-            [this](Context const& context, real_t value) {
-                return value;
-            }
-        };
-        return convert.at(static_cast<std::size_t>(l.unit))(*this, l.value);
-    }
-
 }

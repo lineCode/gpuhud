@@ -15,8 +15,7 @@ add_library(
     "source/gpugraph/XmlLoader.cpp"
     "source/gpugraph/NodeHash.cpp"
     "source/gpugraph/Selector.cpp"
-    
- "source/gpugraph/css/length.h" "source/gpugraph/css/grammar.h")
+)
 
 set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 20)
 

@@ -122,9 +122,12 @@ namespace gpugraph
 
     GLuint Program::Shader::handle() 
     {
-        if (!_handle)
+        if (!_compiled)
+        {
             compile();
-        return _handle.value();
+            _compiled = true;
+        }
+        return _handle;
     }
 
     Program::Shader::Shader(const Shader& shader)

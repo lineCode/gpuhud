@@ -62,7 +62,7 @@ namespace gpuhud
         auto dpi = _subsystem_window->get_dpi();
         auto tf = SkTypeface::MakeFromName("Lucida Console", SkFontStyle::Normal());
         auto default_font = std::make_shared<SkFont>(tf);
-        default_font->setSize(std::round(dpi / 5.f)); // "dpi == dots per 25,4[mm]"
+        default_font->setSize(static_cast<float>(std::round(dpi / 5.f))); // "dpi == dots per 25,4[mm]"
         root_node->set_font(default_font);
 
         bool first = true;
@@ -126,11 +126,12 @@ namespace gpuhud
             while (glGetError() != GL_NO_ERROR)
                 std::cerr << "opengl usage is erroneous, debug it!" << std::endl;
 
+            /*
             if (_frame_counter.increase())
             {
                 std::cout << _frame_counter.frames_per_second() << " fps "
                     << "(" << root_node->intermediate()->render_target().tiles().size() << " tiles)" << std::endl;
-            }
+            }*/
         }
     }
 

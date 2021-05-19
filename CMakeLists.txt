@@ -1,5 +1,8 @@
 ﻿project ("gpuhud")
 cmake_minimum_required (VERSION 3.1)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_BUILD_TYPE debug)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
 
 #
@@ -42,7 +45,7 @@ add_subdirectory(extern/googletest)
 
 #
 # boost (spirit)
-include_directories(extern/boost)
+include_directories(extern/x3css/extern/boost)
 
 #
 #-------------------------------------------------------------------------------
@@ -50,6 +53,9 @@ include_directories(extern/boost)
 
 #
 #libraries
+add_subdirectory(extern/x3css/lib/css)
+add_subdirectory(extern/x3css/lib/css/tests)
+
 add_subdirectory(lib/gpugraph)
 add_subdirectory(lib/gpugraph/tests)
 

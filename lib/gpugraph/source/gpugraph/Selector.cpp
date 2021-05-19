@@ -25,7 +25,6 @@ namespace gpugraph
     */
     Selector Selector::parse(std::string const& expression)
     {
-        std::vector<std::string>;
         static auto espace = std::regex(R"~(\\s+)~");
         std::sregex_token_iterator it{ expression.begin(), expression.end(), espace, -1}, last;
         for (; it != std::sregex_token_iterator(); ++it)
@@ -41,6 +40,7 @@ namespace gpugraph
                 auto result = gpugraph::tokenize(token, "[\.#:][^\.#:]+");
             }
         }
+        throw "";
     }
 
 }

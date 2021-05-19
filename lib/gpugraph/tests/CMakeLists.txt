@@ -3,7 +3,8 @@ add_executable(
     gpugraph_tests 
     
     "source/TestStringUtils.cpp"
-    "source/TestGrammar.cpp"
+    "source/TestXmlLoader.cpp"
+    
     "source/main.cpp"
 )
 set_property(TARGET gpugraph_tests PROPERTY CXX_STANDARD 20)

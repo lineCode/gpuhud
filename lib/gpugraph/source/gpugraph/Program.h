@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <optional>
 
 #include "opengl.h"
 
@@ -75,7 +74,8 @@ namespace gpugraph
     private:
         std::string _source;
         GLenum _type;
-        std::optional<GLuint> _handle;
+        bool _compiled = false;
+        GLuint _handle;
         std::vector<GLuint> _attributes;
         friend class Program;
     };
