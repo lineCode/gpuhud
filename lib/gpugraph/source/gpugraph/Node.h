@@ -7,7 +7,6 @@
 #include <string>
 
 #include "types.h"
-#include "attributes.h"
 #include "Context.h"
 
 namespace gpugraph
@@ -76,8 +75,6 @@ namespace gpugraph
 
         //
         // sizing & visibility
-        Display _display; // e. g. the type of node
-        Position _position = Position::Static;
         bool _visible = true;
 
         struct

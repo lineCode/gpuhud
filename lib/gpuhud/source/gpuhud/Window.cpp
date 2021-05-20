@@ -10,7 +10,6 @@
 #include <chrono>
 
 #include <gpugraph/Intermediate.h>
-#include <gpugraph/attributes.h>
 #include <gpugraph/util.h>
 
 #include "subsystem/GlfwSubsystem.h"
@@ -38,8 +37,6 @@ namespace gpuhud
     {
         _context.make_current();
 
-        using gpugraph::Length;
-        
         auto root_node = this->root_node();
         /* TODO
         root_node->set_left(0 | Length::px);
@@ -57,8 +54,6 @@ namespace gpuhud
 
     void Window::loop()
     {
-        using gpugraph::Length;
-
         auto& root_node = this->root_node();
         _subsystem_window->make_current();
 
