@@ -1,6 +1,7 @@
 #include "Node.h"
 #include "NodeState.h"
 #include "Intermediate.h"
+#include "Style.h"
 
 namespace gpugraph
 {
@@ -8,6 +9,7 @@ namespace gpugraph
     Node::Node(std::string type)
         : _type(std::move(type))
         , _state(std::make_shared<State>())
+        , _style(std::make_shared<Style>())
     {
     }
 
@@ -101,19 +103,14 @@ namespace gpugraph
             for (auto& child : _children)
                 child->compute_content_properties(true);
         }
-        //
-        // throughts/interpretation (css):
-        // normally, text as content is a one-liner. min-content & max-content & content of 
-        // text is the same. if width is set to any "content"-property, it'll become a 
-        // one-liner. if width is set with px or .. it depends on "word-wrap".
-        // For this, we may use the Skia-Paragraph-Builder..?
-        //
-        // consequence: 
-        //   we need to compute the text width (and height) here of any text-content.
-        //   setting min-width etc. explicitely will override the computed one.
+    }
 
-        //
-        // todo: set root font, calc rem
+    void Node::set_style(std::shared_ptr<Style> style)
+    {
+        if (!style)
+            return;
+        _style = std::move(style);
+        // TODO: apply this
     }
 
 }

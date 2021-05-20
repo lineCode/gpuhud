@@ -45,4 +45,10 @@ namespace gpugraph
         return buffer;
     }
 
+    Debounce::Debounce(std::chrono::milliseconds milliseconds)
+        : _timeout(milliseconds)
+        , _time(std::chrono::high_resolution_clock::now())
+    {
+    }
+
 }

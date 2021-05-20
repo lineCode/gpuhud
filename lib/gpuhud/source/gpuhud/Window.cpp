@@ -7,11 +7,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-
-#include "subsystem/GlfwSubsystem.h"
+#include <chrono>
 
 #include <gpugraph/Intermediate.h>
 #include <gpugraph/attributes.h>
+#include <gpugraph/util.h>
+
+#include "subsystem/GlfwSubsystem.h"
 
 void GLAPIENTRY
 MessageCallback(GLenum source,
@@ -37,7 +39,6 @@ namespace gpuhud
         _context.make_current();
 
         using gpugraph::Length;
-        std::cout << "size: " << sizeof(100 | Length::px) << std::endl;
         
         auto root_node = this->root_node();
         /* TODO
@@ -70,6 +71,9 @@ namespace gpuhud
         bool first = true;
         while (!_subsystem_window->is_closed())
         {
+            if(_hot_reload_style)
+                hot_reload_style();
+
             auto width = _subsystem_window->width();
             auto height = _subsystem_window->height();
             /*TODO root_node->set_width(width | Length::px);
@@ -156,6 +160,47 @@ namespace gpuhud
     std::uint32_t Window::height() const
     {
         return _subsystem_window->height();
+    }
+
+    void Window::hot_reload_style()
+    {
+        if (!_style_filename)
+            return;
+        _style_debouncer([this]() {
+            auto time = fs::last_write_time(_style_filename.value());
+            if (time - _style_last_write_time > std::chrono::milliseconds(0))
+            {
+                _style_last_write_time = time;
+                std::cout << "[hud] reloading \"" << _style_filename.value() << "\"" << std::endl;
+                auto style = std::make_shared<gpugraph::Style>();
+                auto content = gpugraph::read_file(_style_filename.value().c_str());
+                try
+                {
+                    style->compile(content);
+                }
+                catch (std::runtime_error& e)
+                {
+                    std::cout << "[hud] exception while loading style: " << e.what() << std::endl;
+                }
+                root_node()->set_style(style);
+            }
+        });
+    }
+
+    void Window::load_style(std::string const& filename, bool hot_reload)
+    {
+        if (filename.empty())
+        {
+            _style_filename.reset();
+            return;
+        }
+        _hot_reload_style = hot_reload;
+        _style_filename = filename;
+        _style_last_write_time = fs::last_write_time(filename);
+        auto content = gpugraph::read_file(filename.c_str());
+        auto style = std::make_shared<gpugraph::Style>();
+        style->compile(content);
+        root_node()->set_style(style);
     }
 
 }

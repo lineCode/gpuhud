@@ -13,6 +13,7 @@
 namespace gpugraph
 {
 
+    class Style;
     class Intermediate;
 
     class Node : public std::enable_shared_from_this<Node>
@@ -55,14 +56,16 @@ namespace gpugraph
         std::vector<std::shared_ptr<Node>>::iterator begin();
         std::vector<std::shared_ptr<Node>>::iterator end();
 
+        void set_style(std::shared_ptr<Style>);
+
     protected:
         Node(std::string type);
 
     private:
+        std::shared_ptr<Style> _style;
+
         bool _layout_changed = true;
-
         bool _force_intermediate = false;
-
         //
         // intermediate rendering
         std::shared_ptr<Intermediate> _intermediate;
