@@ -9,9 +9,9 @@ namespace gpuhud
         , _close_button(gpugraph::Node::create())
     {
         using namespace gpugraph;
-        root_node()->set_display(Display::Flex);
-        root_node()->set_min_width(10 | Length::px);
-        root_node()->set_min_height(10 | Length::px);
+//        root_node()->set_display(Display::Flex);
+//        root_node()->set_min_width(10 | Length::px);
+//        root_node()->set_min_height(10 | Length::px);
         root_node()->add(_header_row);
 
         _header_row->add(_title_label);

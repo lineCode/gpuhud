@@ -2,9 +2,7 @@ add_library(
 
     lib_gpugraph
 
-    "source/gpugraph/RenderTarget.h" 
     "source/gpugraph/RenderTarget.cpp" 
-    "source/gpugraph/Node.h"
     "source/gpugraph/Node.cpp"
     "source/gpugraph/NodeState.cpp"
     "source/gpugraph/Context.cpp" 
@@ -14,8 +12,9 @@ add_library(
     "source/gpugraph/SkiaRenderTarget.cpp"
     "source/gpugraph/XmlLoader.cpp"
     "source/gpugraph/NodeHash.cpp"
-    "source/gpugraph/Selector.cpp"
-)
+    "source/gpugraph/Style.cpp"
+  
+ "source/gpugraph/StyleCompiler.cpp" "source/gpugraph/StyleCompiler.h" "source/gpugraph/StyleSelector.h" "source/gpugraph/StyleSelector.cpp")
 
 set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 20)
 
@@ -27,6 +26,7 @@ target_link_libraries(lib_gpugraph PUBLIC skia)
 target_link_libraries(lib_gpugraph PUBLIC glad)
 target_link_libraries(lib_gpugraph PUBLIC glfw)
 target_link_libraries(lib_gpugraph PUBLIC glm)
+target_link_libraries(lib_gpugraph PUBLIC lib_css)
 target_link_libraries(lib_gpugraph PUBLIC ${OPENGL_LIBRARIES})
 target_link_libraries(lib_gpugraph PUBLIC tinyxml2)
 

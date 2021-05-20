@@ -4,41 +4,106 @@
 #include "Node.h"
 #include "Rectangle.h"
 #include "Context.h" // for skia
+#include <css/parser.hpp>
+#include <css/color.hpp>
 
 namespace gpugraph
 {
+    using color = css::color;
 
     using Bounds = Rectangle<float>;
 
-    //
-    // sizing is done like:
-    // 1) calculating min-content, max-content and content
-    //    for width and height
-    // 2) adjusting the tree
-    // 3) ...
     struct Node::State
     {
-        // bound's can be greater than the width/height
-        Bounds bounds;
+        // Bounds bounds; // <- for mouse interaction?
+        Bounds border_box;
+        Bounds content_box;
 
-        real_t x = 0; // [px]
-        real_t y = 0; // [px]
-        real_t width = 0; // [px]
-        real_t height = 0; // [px]
+        real_t _opacity = 1.f;
 
-        /*
+        css::display display;
+        css::position position;
+        
+        struct Inherited
+        {
+            /*
+            DONE
+            font-weight
+            font-family
+            font-size
+            font-style
+            font-variant
+            font
+            color
+            
+            IMPORTANT
+            direction
+            cursor
+            white-space
+            word-break
+            word-spacing
+            letter-spacing
+            word-wrap
+            text-align
+            text-align-last
+            text-decoration-color
+            text-indent
+            text-justify
+            text-shadow
+            text-transform
+
+            NICE T. HAVE
+            border-collapse
+            border-spacing
+            caption-side
+            font-size-adjust
+            font-stretch
+            */
+            gpugraph::color color;
+            std::shared_ptr<SkFont> font;
+        } inherited;
+
+        struct Defaulted
+        {
+            real_t width = 0.f;
+            real_t height = 0.f;
+
+            enum Edge
+            {
+                Left = 0,
+                Top = 1,
+                Right = 2,
+                Bottom = 3
+            };
+            enum Corner
+            {
+                TopLeft = 0,
+                TopRight = 1,
+                BottomRight = 2,
+                BottomLeft = 3
+            };
+            std::array<std::optional<real_t>, 4> distance = std::array<std::optional<real_t>, 4>();
+            std::array<real_t, 4> border_width = {0.f, 0.f, 0.f, 0.f};
+            std::array<real_t, 4> border_radius = {0.f, 0.f, 0.f, 0.f};
+            std::array<real_t, 4> margin = {0.f, 0.f, 0.f, 0.f};
+            std::array<real_t, 4> padding = {0.f, 0.f, 0.f, 0.f};
+
+            bool layout_dirty = true;
+            bool needs_redraw = true;
+
+        } defaulted;
+
+        //
+        // computed
         real_t width_min_content; // [px]
         real_t width_max_content; // [px]
 
         real_t height_min_content; // [px]
         real_t height_max_content; // [px]
-        */
 
-        std::shared_ptr<SkFont> font;
+        static Defaulted defaults;
 
-        bool layout_dirty = true;
-        bool needs_redraw = true;
-
+        void inherit(State&);
         void reset();
     };
 

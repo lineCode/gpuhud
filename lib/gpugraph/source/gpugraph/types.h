@@ -14,7 +14,6 @@ namespace gpugraph
     using vec2 = glm::vec2;
     using vec4 = glm::vec4;
     using mat3x3 = glm::mat3x3;
-    using color = glm::vec4;
     using real_t = float;
 
 }

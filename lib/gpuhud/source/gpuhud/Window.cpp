@@ -40,11 +40,13 @@ namespace gpuhud
         std::cout << "size: " << sizeof(100 | Length::px) << std::endl;
         
         auto root_node = this->root_node();
+        /* TODO
         root_node->set_left(0 | Length::px);
         root_node->set_top(0 | Length::px);
         root_node->set_width(width | Length::px);
         root_node->set_height(height | Length::px);
         root_node->set_position(gpugraph::Position::Absolute);
+        */
 
         set_content_node(root_node);
         root_node->set_force_intermediate(true);
@@ -63,16 +65,16 @@ namespace gpuhud
         auto tf = SkTypeface::MakeFromName("Lucida Console", SkFontStyle::Normal());
         auto default_font = std::make_shared<SkFont>(tf);
         default_font->setSize(static_cast<float>(std::round(dpi / 5.f))); // "dpi == dots per 25,4[mm]"
-        root_node->set_font(default_font);
+        //TODO root_node->set_font(default_font);
 
         bool first = true;
         while (!_subsystem_window->is_closed())
         {
             auto width = _subsystem_window->width();
             auto height = _subsystem_window->height();
-            root_node->set_width(width | Length::px);
+            /*TODO root_node->set_width(width | Length::px);
             root_node->set_height(height | Length::px);
-
+            */
             root_node->intermediate()->set_size(width, height);
 
             auto const& tiles = root_node->intermediate()->render_target().tiles();
@@ -90,7 +92,7 @@ namespace gpuhud
                     {
                         SkPaint paint;
                         paint.setAntiAlias(true);
-                        canvas->drawSimpleText("GpuHud", 6, SkTextEncoding::kUTF8, 200, 100, *root_node->font(), paint);
+//tODO                        canvas->drawSimpleText("GpuHud", 6, SkTextEncoding::kUTF8, 200, 100, *root_node->font(), paint);
                     }
 
                     canvas->rotate(deg, static_cast<SkScalar>(width / 2), static_cast<SkScalar>(height / 2));
