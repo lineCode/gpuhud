@@ -110,7 +110,7 @@ namespace gpugraph
             char* log = new char[static_cast<std::size_t>(logsize) + 1];
             glGetShaderInfoLog(handle, logsize, &logsize, log);
 
-            log_fatal("failed to compile shader: " << std::endl << log)
+            log_fatal("failed to compile shader: " << std::endl << log << std::endl << "shader source:" << std::endl << text << std::endl)
         }
         else 
         {
