@@ -54,10 +54,9 @@ namespace
 
 #define log_fatal(text) if constexpr(__log_level >= __log_level_fatal) \
     std::cout \
-    << log_start << rang::fg::gray \
+    << log_start << rang::fg::red \
     << "[fat!]" \
     << " " << text \
-    << log_start << rang::fg::gray \
     << "  (" << __log_format_file(__FILE__) << ":" << __LINE__ << ")" \
     << log_reset \
     << std::endl; \
@@ -68,7 +67,6 @@ namespace
     << log_start << rang::fg::red << rang::style::rblink \
     << "[err!]" \
     << " " << text \
-    << log_start << rang::fg::red \
     << "  (" << __log_format_file(__FILE__) << ":" << __LINE__ << ")" \
     << log_reset \
     << std::endl;
