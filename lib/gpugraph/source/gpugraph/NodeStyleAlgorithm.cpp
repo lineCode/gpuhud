@@ -1,17 +1,21 @@
-#include "NodeStylePass.h"
+#include "NodeStyleAlgorithm.h"
 #include "Style.h"
 
-void gpugraph::Node::StylePass::operator()(Node& node)
+void gpugraph::Node::StyleAlgorithm::operator()(Node& node)
 {
     if (node._style == nullptr)
         return;
-    auto styling = node._style->make_styling(node);
+    
+    auto styling = node._style->extract_styling(node);
 
     for (auto& child : node._children)
     {
         child->_style = node._style;
         (*this)(*child);
     }
+
+    //
+    // TODO:
 }
 
 /*

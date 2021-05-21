@@ -2,7 +2,7 @@
 #include "NodeState.h"
 #include "Intermediate.h"
 #include "Style.h"
-#include "NodeStylePass.h"
+#include "NodeStyleAlgorithm.h"
 
 namespace gpugraph
 {
@@ -24,7 +24,7 @@ namespace gpugraph
         _children.push_back(node);
         node->_parent = this;
         node->_style = _style;
-        StylePass()(*node);
+        StyleAlgorithm()(*node);
     }
 
     void Node::remove(std::shared_ptr<Node> const& node)
@@ -32,6 +32,8 @@ namespace gpugraph
         _children.erase(std::remove_if(_children.begin(), _children.end(), [&](auto& child) {
             return node == child;
         }), _children.end());
+        // TODO:
+        // recompute content ..
     }
 
     void Node::clear()
@@ -39,9 +41,12 @@ namespace gpugraph
         _children.clear();
     }
 
+    // set attribute..
     Node& Node::set_id(std::string value)
     {
+        _style_hash.erase("#" + _id);
         _id = std::move(value);
+        StyleAlgorithm()(*this);
         return *this;
     }
 
@@ -53,12 +58,14 @@ namespace gpugraph
     Node& Node::add_class(std::string class_)
     {
         _class_set.insert(std::move(class_));
+        StyleAlgorithm()(*this);
         return *this;
     }
 
     Node& Node::remove_class(std::string const& class_)
     {
         _class_set.erase(class_);
+        StyleAlgorithm()(*this);
         return *this;
     }
 
@@ -83,6 +90,8 @@ namespace gpugraph
     Node& Node::set_text_content(std::string value)
     {
         _text_content = std::move(value);
+        // TODO
+        // recompute content
         return *this;
     }
 
@@ -108,8 +117,7 @@ namespace gpugraph
         if (!style)
             return;
         _style = std::move(style);
-        StylePass()(*this);
-        // TODO: apply this
+        StyleAlgorithm()(*this);
     }
 
 }

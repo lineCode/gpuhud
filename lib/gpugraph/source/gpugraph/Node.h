@@ -8,6 +8,7 @@
 
 #include "types.h"
 #include "Context.h"
+#include "log.h"
 
 namespace gpugraph
 {
@@ -23,30 +24,14 @@ namespace gpugraph
         virtual ~Node() = default;
         static std::shared_ptr<Node> create(std::string type="div");
 
+        //
+        // children
+        std::size_t size() const;
+        
         void add(std::shared_ptr<Node>);
         void remove(std::shared_ptr<Node> const&);
         void clear();
 
-        Node& set_id(std::string);
-        std::string const& id() const;
-
-        Node& add_class(std::string);
-        Node& remove_class(std::string const&);
-        std::set<std::string> const& class_set() const;
-
-        Node& set_force_intermediate(bool);
-        bool force_intermediate() const;
-
-        Node& set_text_content(std::string);
-        std::string const& text_content() const;
-
-        std::shared_ptr<Intermediate> const& intermediate() const;
-
-        using StateVisitor = std::function<bool(Node&, Node::State&)>;
-        void accept(StateVisitor);
-
-        std::size_t size() const;
-        
         std::shared_ptr<Node> at(std::size_t);
         std::shared_ptr<Node> const& at(std::size_t) const;
         
@@ -56,44 +41,62 @@ namespace gpugraph
         std::vector<std::shared_ptr<Node>>::iterator begin();
         std::vector<std::shared_ptr<Node>>::iterator end();
 
+        //
+        // selector based styling
+        Node& set_id(std::string);
+        std::string const& id() const;
+
+        Node& add_class(std::string);
+        Node& remove_class(std::string const&);
+        std::set<std::string> const& class_set() const;
+
+        //
+        // set css style collection
         void set_style(std::shared_ptr<Style>);
+
+        //
+        // used by the selector for optimizing the stylesheet linking,
+        // contains classes with prefix ".", hash identifiers with "#" etc.
         std::set<std::string> const& style_hash() const;
+
+        //
+        // rendering
+        Node& set_force_intermediate(bool);
+        bool force_intermediate() const;
+        std::shared_ptr<Intermediate> const& intermediate() const;
+
+        Node& set_text_content(std::string);
+        std::string const& text_content() const;
+
+        //
+        // depth first traversal
+        using StateVisitor = std::function<bool(Node&, Node::State&)>;
+        void accept(StateVisitor);
 
     protected:
         Node(std::string type);
 
     private:
-        struct StylePass;
-        struct UpdatePass;
-        struct RenderPass;
+        struct StyleAlgorithm;
+        // struct UpdatePass;
+        // struct RenderPass;
 
-        std::shared_ptr<Style> _style;
-        std::set<std::string> _style_hash;
-
-        bool _layout_changed = true;
+        //
+        // force an intermediate with this node as root
         bool _force_intermediate = false;
+
         //
         // intermediate rendering
         std::shared_ptr<Intermediate> _intermediate;
 
-        std::string _type;
-        std::string _id;
-        std::set<std::string> _class_set;
-
         //
-        // sizing & visibility
-        bool _visible = true;
+        // styling
+        std::shared_ptr<Style> _style;
+        std::set<std::string> _style_hash;
 
-        struct
-        {
-            bool active= false;
-            bool hovered= false;
-            bool focused = false;
-        } _input;
-
-        real_t _opacity = 1.f;
-
-        std::string _text_content;
+        std::string _id;
+        std::string _type;
+        std::set<std::string> _class_set;
 
         //
         // tree structure
@@ -101,7 +104,11 @@ namespace gpugraph
         std::vector<std::shared_ptr<Node>> _children;
 
         //
-        // (calculated) state
+        // text ..
+        std::string _text_content;
+
+        //
+        // (calculated) state, this is a 1:1-relationship
         std::shared_ptr<State> _state;
     };
 
@@ -132,13 +139,22 @@ namespace gpugraph
 
     inline std::shared_ptr<Node> Node::at(std::size_t index)
     {
+        if (index >= size())
+        {
+            log_error("accessed \"" << this->_type << "\" with oob index");
+            return nullptr;
+        }
         return _children.at(index);
     }
 
     inline std::shared_ptr<Node> const& Node::at(std::size_t index) const
     {
+        if (index >= size())
+        {
+            log_error("accessed \"" << this->_type << "\" with oob index");
+            return nullptr;
+        }
         return _children.at(index);
     }
-
 
 }

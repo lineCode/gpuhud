@@ -5,7 +5,7 @@
 namespace gpugraph
 {
 
-    struct Node::StylePass
+    struct Node::StyleAlgorithm
     {
         void operator()(Node&);
     };
