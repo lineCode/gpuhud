@@ -14,10 +14,11 @@
 constexpr unsigned int __log_level = LOG_LEVEL;
 
 constexpr unsigned int __log_level_none = 0;
-constexpr unsigned int __log_level_error = 1;
-constexpr unsigned int __log_level_warn = 2;
-constexpr unsigned int __log_level_info = 3;
-constexpr unsigned int __log_level_debug = 4;
+constexpr unsigned int __log_level_fatal = 1;
+constexpr unsigned int __log_level_error = 2;
+constexpr unsigned int __log_level_warn = 3;
+constexpr unsigned int __log_level_info = 4;
+constexpr unsigned int __log_level_debug = 5;
 
 inline std::string __log_format_file(std::string file)
 {    
