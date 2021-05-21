@@ -10,6 +10,8 @@
 
 #include "Program.h"
 
+#include "log.h"
+
 namespace gpugraph
 {
 
@@ -108,11 +110,7 @@ namespace gpugraph
             char* log = new char[static_cast<std::size_t>(logsize) + 1];
             glGetShaderInfoLog(handle, logsize, &logsize, log);
 
-            // TODO: throw with designed exception
-            std::cout << "failed to compile shader: " << std::endl;
-            std::cout << log << std::endl;
-
-            exit(EXIT_FAILURE);
+            log_fatal("failed to compile shader: " << std::endl << log)
         }
         else 
         {
@@ -120,7 +118,7 @@ namespace gpugraph
         }
     }
 
-    GLuint Program::Shader::handle() 
+    GLuint Program::Shader::handle()
     {
         if (!_compiled)
         {
@@ -153,7 +151,10 @@ namespace gpugraph
         : Program() 
     {
         for (auto& s : shaderList)
+        {
+            auto handle = s.handle();
             glAttachShader(_handle, s.handle());
+        }
         link();
     }
 
@@ -163,15 +164,13 @@ namespace gpugraph
         glGetProgramiv(_handle, GL_LINK_STATUS, &result);
         if (result != GL_TRUE) 
         {
-            std::cout << "linkage error" << std::endl;
-
             GLsizei logsize = 0;
             glGetProgramiv(_handle, GL_INFO_LOG_LENGTH, &logsize);
 
             char* log = new char[logsize];
             glGetProgramInfoLog(_handle, logsize, &logsize, log);
 
-            std::cout << log << std::endl;
+            log_fatal("failed to link program: " << std::endl << log)
         }
     }
 
@@ -186,7 +185,7 @@ namespace gpugraph
     GLint Program::attribute(const std::string& name) {
         GLint attrib = glGetAttribLocation(_handle, name.c_str());
         if (attrib == GL_INVALID_OPERATION || attrib < 0)
-            std::cout << "attribute " << name << " doesn't exist in program" << std::endl;
+            log_error("attribute " << name << " doesn't exist in program");
 
         return attrib;
     }

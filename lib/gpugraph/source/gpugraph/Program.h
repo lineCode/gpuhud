@@ -75,7 +75,7 @@ namespace gpugraph
         std::string _source;
         GLenum _type;
         bool _compiled = false;
-        GLuint _handle;
+        GLuint _handle = 0;
         std::vector<GLuint> _attributes;
         friend class Program;
     };
