@@ -64,8 +64,12 @@ namespace gpugraph
 
     std::ostream& operator<<(std::ostream& stream, StyleHash const& hash)
     {
+        std::string separator;
         for (auto& value : hash.values())
-            stream << value;
+        {
+            stream << separator << value;
+            separator = " ";
+        }
         return stream;
     }
 
