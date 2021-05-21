@@ -12,7 +12,7 @@ namespace gpugraph
     {
         std::uint64_t sa = 0 /* hash */;
         std::uint64_t sb = 0 /* attribte & class */;
-        std::uint64_t sc = 0/*type + pseudo (excl. ":not")*/;
+        std::uint64_t sc = 0 /*type + pseudo (excl. ":not")*/;
         for (auto& item : definition.path)
         {
             std::set<std::string> combined;

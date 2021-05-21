@@ -53,7 +53,7 @@ namespace gpuhud
         std::unique_ptr<Subsystem::Window> _subsystem_window;
         
         gpugraph::Context _context;
-//        gpugraph::FrameCounter _frame_counter = gpugraph::FrameCounter();
+        gpugraph::FrameCounter _frame_counter = gpugraph::FrameCounter();
     };
 
 }

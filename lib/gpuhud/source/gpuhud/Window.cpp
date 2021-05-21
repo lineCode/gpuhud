@@ -11,6 +11,7 @@
 
 #include <gpugraph/Intermediate.h>
 #include <gpugraph/util.h>
+#include <gpugraph/log.h>
 
 #include "subsystem/GlfwSubsystem.h"
 
@@ -127,12 +128,10 @@ namespace gpuhud
             while (glGetError() != GL_NO_ERROR)
                 std::cerr << "opengl usage is erroneous, debug it!" << std::endl;
 
-            /*
             if (_frame_counter.increase())
             {
-                std::cout << _frame_counter.frames_per_second() << " fps "
-                    << "(" << root_node->intermediate()->render_target().tiles().size() << " tiles)" << std::endl;
-            }*/
+                log_with_level(99, _frame_counter.frames_per_second() << " fps ");
+            }
         }
     }
 
@@ -166,7 +165,7 @@ namespace gpuhud
             if (time - _style_last_write_time > std::chrono::milliseconds(0))
             {
                 _style_last_write_time = time;
-                std::cout << "[hud] reloading \"" << _style_filename.value() << "\"" << std::endl;
+                log_info("hot reloading \"" << _style_filename.value() << "\"");
                 auto style = std::make_shared<gpugraph::Style>();
                 auto content = gpugraph::read_file(_style_filename.value().c_str());
                 try
@@ -175,7 +174,7 @@ namespace gpuhud
                 }
                 catch (std::runtime_error& e)
                 {
-                    std::cout << "[hud] exception while loading style: " << e.what() << std::endl;
+                    log_error("exception while loading style: " << e.what());
                 }
                 root_node()->set_style(style);
             }
