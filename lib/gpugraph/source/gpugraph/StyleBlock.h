@@ -8,13 +8,13 @@ namespace gpugraph
 
     struct Style::Block
     {
-        Block(std::shared_ptr<Selector>, Styling);
+        Block(std::shared_ptr<Selector>, std::vector<Rule>);
 
         bool can_be_linked_to(Node const&);
         bool is_applicable_to(Node const&);
 
         std::shared_ptr<Selector> selector;
-        Styling styling;
+        std::vector<Style::Rule> rules;
     };
 
 }

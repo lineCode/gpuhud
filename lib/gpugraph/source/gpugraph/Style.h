@@ -16,7 +16,7 @@ namespace gpugraph
         struct Selector;
         struct Block;
 
-        using Sheet = std::function<void(Node&)>;
+        using Rule = std::function<void(Node&)>;
         using Styling = std::vector<std::shared_ptr<Block>>;
 
         void compile(std::string const&);

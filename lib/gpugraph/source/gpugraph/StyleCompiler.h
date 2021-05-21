@@ -21,7 +21,7 @@ namespace gpugraph
         // 
         // compile state
         std::vector<std::shared_ptr<Selector>> _selectors;
-        Styling _styling;
+        std::vector<Rule> _rules;
     };
 
 

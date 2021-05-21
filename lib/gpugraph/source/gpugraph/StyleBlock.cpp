@@ -5,9 +5,9 @@
 namespace gpugraph
 {
 
-    Style::Block::Block(std::shared_ptr<Selector> selector, Styling styling)
+    Style::Block::Block(std::shared_ptr<Selector> selector, std::vector<Rule> rules)
         : selector(std::move(selector))
-        , styling(std::move(styling))
+        , rules(std::move(rules))
     {
     }
 
