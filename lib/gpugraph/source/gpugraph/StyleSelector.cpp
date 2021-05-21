@@ -15,23 +15,23 @@ namespace gpugraph
         std::uint64_t sc = 0 /*type + pseudo (excl. ":not")*/;
         for (auto& item : definition.path)
         {
-            std::set<std::string> combined;
+            StyleHash style_hash;
             if (!item.type_selector.empty() && item.type_selector != "*")
             {
-                combined.insert(item.type_selector);
+                style_hash.insert_type(item.type_selector);
                 ++sc;
             }
             for (auto& class_ : item.class_selectors)
             {
-                combined.insert("." + class_);
+                style_hash.insert_class(class_);
                 ++sb;
             }
             for (auto& id : item.hash_selectors)
             {
-                combined.insert("#" + id);
+                style_hash.insert_id(id);
                 ++sa;
             }
-            _path.push_back({ item.combinator, std::move(combined) });
+            _path.push_back(PathItem{ item.combinator, std::move(style_hash) });
         }
         _specificity = sa << 32 | sb << 16 | sc << 0;
         log_debug("created selector (sa=" << sa << ", sb=" << sb << ", sc=" << sc << "): " << definition);

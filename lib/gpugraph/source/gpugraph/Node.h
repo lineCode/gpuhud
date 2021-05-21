@@ -9,6 +9,8 @@
 #include "types.h"
 #include "Context.h"
 #include "log.h"
+#include "Style.h"
+#include "StyleHash.h"
 
 namespace gpugraph
 {
@@ -45,6 +47,7 @@ namespace gpugraph
         // selector based styling
         Node& set_id(std::string);
         std::string const& id() const;
+        std::string const& type() const;
 
         Node& add_class(std::string);
         Node& remove_class(std::string const&);
@@ -57,7 +60,7 @@ namespace gpugraph
         //
         // used by the selector for optimizing the stylesheet linking,
         // contains classes with prefix ".", hash identifiers with "#" etc.
-        std::set<std::string> const& style_hash() const;
+        StyleHash const& style_hash() const;
 
         //
         // rendering
@@ -92,7 +95,8 @@ namespace gpugraph
         //
         // styling
         std::shared_ptr<Style> _style;
-        std::set<std::string> _style_hash;
+        StyleHash _style_hash;
+        Style::Styling _styling;
 
         std::string _id;
         std::string _type;

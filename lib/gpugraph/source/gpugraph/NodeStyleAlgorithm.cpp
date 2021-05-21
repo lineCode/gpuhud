@@ -1,13 +1,15 @@
 #include "NodeStyleAlgorithm.h"
 #include "Style.h"
 
+#include "log.h"
+
 void gpugraph::Node::StyleAlgorithm::operator()(Node& node)
 {
     if (node._style == nullptr)
         return;
     
-    auto styling = node._style->extract_styling(node);
-
+    node._styling = node._style->extract_styling(node);
+    log_with_level(1000, "applied \"" << node._styling.size() << " blocks to \"" << node._type << "\"");
     for (auto& child : node._children)
     {
         child->_style = node._style;

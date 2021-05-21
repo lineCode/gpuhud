@@ -130,7 +130,7 @@ namespace gpuhud
 
             if (_frame_counter.increase())
             {
-                log_with_level(99, _frame_counter.frames_per_second() << " fps ");
+                log_with_level(999, _frame_counter.frames_per_second() << " fps ");
             }
         }
     }

@@ -12,6 +12,12 @@ namespace gpugraph
         , _state(std::make_shared<State>())
         , _style(std::make_shared<Style>())
     {
+        _style_hash.insert_type(_type);
+    }
+            
+    std::string const& Node::type() const
+    {
+        return _type;
     }
 
     std::shared_ptr<Node> Node::create(std::string type)
@@ -44,7 +50,7 @@ namespace gpugraph
     // set attribute..
     Node& Node::set_id(std::string value)
     {
-        _style_hash.erase("#" + _id);
+        _style_hash.insert_id(_id);
         _id = std::move(value);
         StyleAlgorithm()(*this);
         return *this;
@@ -58,13 +64,14 @@ namespace gpugraph
     Node& Node::add_class(std::string class_)
     {
         _class_set.insert(std::move(class_));
+        _style_hash.insert_class(class_);
         StyleAlgorithm()(*this);
         return *this;
     }
 
     Node& Node::remove_class(std::string const& class_)
     {
-        _class_set.erase(class_);
+        _class_set.erase("." + class_);
         StyleAlgorithm()(*this);
         return *this;
     }
@@ -118,6 +125,11 @@ namespace gpugraph
             return;
         _style = std::move(style);
         StyleAlgorithm()(*this);
+    }
+
+    StyleHash const& Node::style_hash() const
+    {
+        return _style_hash;
     }
 
 }

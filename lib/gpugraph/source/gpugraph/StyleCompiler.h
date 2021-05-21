@@ -16,9 +16,12 @@ namespace gpugraph
         void handle_end_block() override;
 
     private:
+        Style& _style;
+        
+        // 
+        // compile state
         std::vector<std::shared_ptr<Selector>> _selectors;
         Styling _styling;
-        Style& _style;
     };
 
 

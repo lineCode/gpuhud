@@ -11,7 +11,7 @@
 #include <algorithm>
 
 #ifndef LOG_LEVEL
-#  define LOG_LEVEL 10
+#  define LOG_LEVEL 100
 #endif
 
 constexpr unsigned int __log_level = LOG_LEVEL;
