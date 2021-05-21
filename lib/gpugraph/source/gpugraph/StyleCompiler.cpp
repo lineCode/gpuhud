@@ -39,4 +39,29 @@ namespace gpugraph
         _selectors.clear();
     }
 
+    void Style::Compiler::handle_left(css::distance distance)
+    {
+        if (std::holds_alternative<css::cascade>(distance))
+        {
+            _rules.push_back([=](Node& node) {
+                // TODO: implement/apply cascade rule
+            });
+        }
+    }
+
+    void Style::Compiler::handle_top(css::distance)
+    {
+        // ...
+    }
+
+    void Style::Compiler::handle_right(css::distance)
+    {
+        // ...
+    }
+
+    void Style::Compiler::handle_bottom(css::distance)
+    {
+        // ...
+    }
+
 }
