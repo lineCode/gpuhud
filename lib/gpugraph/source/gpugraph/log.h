@@ -25,7 +25,8 @@ constexpr unsigned int __log_level_debug = 4;
 inline std::string __log_format_file(std::string file)
 {    
     std::transform(file.begin(), file.end(), file.begin(), [](auto c) { return std::tolower(c); });
-    return std::filesystem::path(file).stem().string();
+    std::filesystem::path path(file);
+    return path.stem().string() + path.extension().string();
 }
 
 #define log_fatal(text) std::cerr << "[debug:" << __log_format_file(__FILE__) << ":" << __LINE__ << "]" << text; exit(-1)
