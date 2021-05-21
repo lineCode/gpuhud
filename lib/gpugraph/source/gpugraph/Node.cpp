@@ -132,5 +132,10 @@ namespace gpugraph
         return _style_hash;
     }
 
+    Node const* Node::parent() const
+    {
+        return _parent;
+    }
+
 }
 

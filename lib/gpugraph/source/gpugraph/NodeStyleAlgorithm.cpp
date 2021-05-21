@@ -1,5 +1,7 @@
 #include "NodeStyleAlgorithm.h"
 #include "Style.h"
+#include "StyleBlock.h"
+#include "StyleSelector.h"
 
 #include "log.h"
 
@@ -12,6 +14,10 @@ void gpugraph::Node::StyleAlgorithm::link_style_recursively(Node& node)
     //
     // way down
     log_with_level(9, "linked "<< node._styling.size() << " blocks to \"" << node._style_hash << "\"");
+    //
+    // apply style to state
+    apply_linked_styling(node);
+
     for (auto& child : node._children)
     {
         child->_style = node._style;
@@ -19,7 +25,7 @@ void gpugraph::Node::StyleAlgorithm::link_style_recursively(Node& node)
     }
     //
     // way back during depth first traversal
-    apply_linked_styling(node);
+    // TODO: .. compute content ..
 }
 
 void gpugraph::Node::StyleAlgorithm::apply_linked_styling(Node& node)
@@ -27,16 +33,9 @@ void gpugraph::Node::StyleAlgorithm::apply_linked_styling(Node& node)
     // 1) apply
     for (auto& block : node._styling)
     {
+        if (block->is_applicable_to(node))
+        {
+            log_with_level(9, "apply \""<< block->selector->definition() << "\" to node \"" << node._style_hash << "\"");
+        }
     }
 }
-
-/*
-a) Node: create set
-b) apply
-c) block: "is active" (selector)
-
-1) content auf dem rückweg berechnen
-2) content vom verursacher zur wurzel hin berechnen
-
-bei 1 u. 2 entsprechend "render" oder "resized" angeben
-*/

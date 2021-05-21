@@ -4,11 +4,13 @@
 #include <iostream>
 
 #include "log.h"
+#include "Node.h"
 
 namespace gpugraph
 {
 
     Style::Selector::Selector(css::selector const& definition)
+        : _definition(definition)
     {
         std::uint64_t sa = 0 /* hash */;
         std::uint64_t sb = 0 /* attribte & class */;
@@ -46,5 +48,48 @@ namespace gpugraph
     {
         return _path;
     }
+
+    bool Style::Selector::is_selecting(Node const& node) const
+    {
+        Node const* node_iterator = &node;
+        auto it = _path.rbegin();
+        auto end = _path.rend();
+        //
+        // combinator for first entry in reverse order is always none
+        css::selector::combinator combinator = css::selector::combinator::none;
+        //
+        // loop until reaching the root node
+        while (node_iterator)
+        {
+            bool fulfilled = it->style_hash.is_subset_of(node_iterator->style_hash());
+            fulfilled = fulfilled && std::all_of(it->pseudo_selectors.begin(), it->pseudo_selectors.end(), [node_iterator](auto& pseudo) {
+                return pseudo(*node_iterator);
+            });
+            if (!fulfilled)
+            {
+                if (combinator == css::selector::combinator::greater)
+                    return false;
+                if (combinator != css::selector::combinator::none)
+                {
+                    log_error("tilde- and plus-combinator aren't supported yet");
+                    return false;
+                }
+                // else:
+                // check if parent can fulfill
+            }
+            else if (++it == end)
+            {
+                return true;
+            }
+            node_iterator = node_iterator->parent();
+        }
+        return it == end;
+    }
+
+    css::selector const& Style::Selector::definition() const
+    {
+        return _definition;
+    }
+
 
 }

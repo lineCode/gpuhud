@@ -16,4 +16,9 @@ namespace gpugraph
         return selector->path().back().style_hash.is_subset_of(node.style_hash());
     }
 
+    bool Style::Block::is_applicable_to(Node const& node)
+    {
+        return selector->is_selecting(node);
+    }
+
 }

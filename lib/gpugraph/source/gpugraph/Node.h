@@ -27,7 +27,8 @@ namespace gpugraph
         static std::shared_ptr<Node> create(std::string type="div");
 
         //
-        // children
+        // tree
+        Node const* parent() const;
         std::size_t size() const;
         
         void add(std::shared_ptr<Node>);
@@ -104,7 +105,7 @@ namespace gpugraph
 
         //
         // tree structure
-        Node* _parent;
+        Node* _parent = nullptr;
         std::vector<std::shared_ptr<Node>> _children;
 
         //
