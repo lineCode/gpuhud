@@ -8,7 +8,7 @@ namespace gpugraph
 {
 
     Node::Node(std::string type)
-        : _type(std::move(type))
+        : _type(type)
         , _state(std::make_shared<State>())
         , _style(std::make_shared<Style>())
     {
@@ -50,7 +50,7 @@ namespace gpugraph
     // set attribute..
     Node& Node::set_id(std::string value)
     {
-        _style_hash.insert_id(_id);
+        _style_hash.insert_id(value);
         _id = std::move(value);
         StyleAlgorithm()(*this);
         return *this;
@@ -63,8 +63,8 @@ namespace gpugraph
 
     Node& Node::add_class(std::string class_)
     {
-        _class_set.insert(std::move(class_));
         _style_hash.insert_class(class_);
+        _class_set.insert(std::move(class_));
         StyleAlgorithm()(*this);
         return *this;
     }

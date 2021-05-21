@@ -20,7 +20,6 @@ namespace gpugraph
         std::vector<std::shared_ptr<Block>> extracted_blocks;
         auto node_style_hash = node.style_hash().values();
         node_style_hash.insert(std::string());
-        log_debug("style node of type \"" << node.type() << "\" with \"" << node.style_hash() << "\"")
         //
         // go through all "identifiers" of the node
         for (auto& identifier : node_style_hash)

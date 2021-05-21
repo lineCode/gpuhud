@@ -9,7 +9,7 @@ void gpugraph::Node::StyleAlgorithm::operator()(Node& node)
         return;
     
     node._styling = node._style->extract_styling(node);
-    log_with_level(1000, "applied \"" << node._styling.size() << " blocks to \"" << node._type << "\"");
+    log_with_level(9, "applied "<< node._styling.size() << " blocks to \"" << node._style_hash << "\"");
     for (auto& child : node._children)
     {
         child->_style = node._style;
