@@ -20,7 +20,7 @@ namespace gpugraph
         using Styling = std::vector<std::shared_ptr<Block>>;
 
         void compile(std::string const&);
-        Styling extract_styling(Node const&) const;
+        Styling extract_linkable_styling_of(Node const&) const;
 
         std::unordered_map<std::string, std::shared_ptr<Block>>::const_iterator begin() const;
         std::unordered_map<std::string, std::shared_ptr<Block>>::const_iterator end() const;
@@ -36,9 +36,9 @@ namespace gpugraph
         Block(std::shared_ptr<Selector>, Styling);
 
         //
-        // a block is applicable, if the every element of the very last 
+        // a block is linkable, if the every element of the very last 
         // path item is contained in the node style-hash
-        bool is_applicable_to(Node const&);
+        bool can_be_linked_to(Node const&);
 
         std::shared_ptr<Selector> selector;
         Styling styling;

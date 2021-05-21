@@ -15,9 +15,9 @@ namespace gpugraph
         css::parser().parse(source, compiler);
     }
 
-    Style::Styling Style::extract_styling(Node const& node) const
+    Style::Styling Style::extract_linkable_styling_of(Node const& node) const
     {
-        std::vector<std::shared_ptr<Block>> extracted_blocks;
+        std::vector<std::shared_ptr<Block>> linkable_blocks;
         auto node_style_hash = node.style_hash().values();
         node_style_hash.insert(std::string());
         //
@@ -30,13 +30,13 @@ namespace gpugraph
             //
             // each block/entry in the hashed block-set is a valid candidate
             for (auto& block : it->second)
-                if(block->is_applicable_to(node))
-                    extracted_blocks.push_back(block);
+                if(block->can_be_linked_to(node))
+                    linkable_blocks.push_back(block);
         }
-        std::sort(extracted_blocks.begin(), extracted_blocks.end(), [](auto& a, auto& b) {
+        std::sort(linkable_blocks.begin(), linkable_blocks.end(), [](auto& a, auto& b) {
             return a->selector->specificity() < b->selector->specificity();
         });
-        return extracted_blocks;
+        return linkable_blocks;
     }
 
     Style::Block::Block(std::shared_ptr<Selector> selector, Styling styling)
@@ -56,7 +56,7 @@ namespace gpugraph
         }
     }
 
-    bool Style::Block::is_applicable_to(Node const& node)
+    bool Style::Block::can_be_linked_to(Node const& node)
     {
         return selector->path().back().style_hash.is_subset_of(node.style_hash());
     }

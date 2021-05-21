@@ -30,7 +30,7 @@ namespace gpugraph
         _children.push_back(node);
         node->_parent = this;
         node->_style = _style;
-        StyleAlgorithm()(*node);
+        StyleAlgorithm().link_style_recursively(*node);
     }
 
     void Node::remove(std::shared_ptr<Node> const& node)
@@ -52,7 +52,7 @@ namespace gpugraph
     {
         _style_hash.insert_id(value);
         _id = std::move(value);
-        StyleAlgorithm()(*this);
+        StyleAlgorithm().link_style_recursively(*this);
         return *this;
     }
 
@@ -65,14 +65,14 @@ namespace gpugraph
     {
         _style_hash.insert_class(class_);
         _class_set.insert(std::move(class_));
-        StyleAlgorithm()(*this);
+        StyleAlgorithm().link_style_recursively(*this);
         return *this;
     }
 
     Node& Node::remove_class(std::string const& class_)
     {
         _class_set.erase("." + class_);
-        StyleAlgorithm()(*this);
+        StyleAlgorithm().link_style_recursively(*this);
         return *this;
     }
 
@@ -124,7 +124,7 @@ namespace gpugraph
         if (!style)
             return;
         _style = std::move(style);
-        StyleAlgorithm()(*this);
+        StyleAlgorithm().link_style_recursively(*this);
     }
 
     StyleHash const& Node::style_hash() const

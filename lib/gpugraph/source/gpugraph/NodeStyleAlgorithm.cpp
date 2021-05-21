@@ -3,21 +3,31 @@
 
 #include "log.h"
 
-void gpugraph::Node::StyleAlgorithm::operator()(Node& node)
+void gpugraph::Node::StyleAlgorithm::link_style_recursively(Node& node)
 {
     if (node._style == nullptr)
         return;
     
-    node._styling = node._style->extract_styling(node);
-    log_with_level(9, "applied "<< node._styling.size() << " blocks to \"" << node._style_hash << "\"");
+    node._styling = node._style->extract_linkable_styling_of(node);
+    //
+    // way down
+    log_with_level(9, "linked "<< node._styling.size() << " blocks to \"" << node._style_hash << "\"");
     for (auto& child : node._children)
     {
         child->_style = node._style;
-        (*this)(*child);
+        this->link_style_recursively(*child);
     }
-
     //
-    // TODO:
+    // way back during depth first traversal
+    apply_linked_styling(node);
+}
+
+void gpugraph::Node::StyleAlgorithm::apply_linked_styling(Node& node)
+{
+    // 1) apply
+    for (auto& block : node._styling)
+    {
+    }
 }
 
 /*
