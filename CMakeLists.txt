@@ -51,6 +51,10 @@ add_subdirectory(extern/googletest)
 include_directories(extern/x3css/extern/boost)
 
 #
+# rang:
+include_directories(lib_gpuhud PUBLIC "extern/rang")
+
+#
 #-------------------------------------------------------------------------------
 #
 
