@@ -7,7 +7,7 @@
 
 namespace gpugraph
 {
-    
+
     class Node;
 
     class Style
@@ -29,19 +29,6 @@ namespace gpugraph
         class Compiler;
         std::set<std::shared_ptr<Block>> _blocks;
         std::unordered_map<std::string, std::set<std::shared_ptr<Block>>> _hash;
-    };
-
-    struct Style::Block
-    {
-        Block(std::shared_ptr<Selector>, Styling);
-
-        //
-        // a block is linkable, if the every element of the very last 
-        // path item is contained in the node style-hash
-        bool can_be_linked_to(Node const&);
-
-        std::shared_ptr<Selector> selector;
-        Styling styling;
     };
 
 }

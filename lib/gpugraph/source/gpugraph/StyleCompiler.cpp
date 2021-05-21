@@ -1,5 +1,6 @@
 #include "StyleCompiler.h"
 #include "StyleSelector.h"
+#include "StyleBlock.h"
 
 #include <algorithm>
 

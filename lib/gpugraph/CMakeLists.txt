@@ -15,9 +15,9 @@ add_library(
     "source/gpugraph/Style.cpp"
     "source/gpugraph/StyleCompiler.cpp" 
     "source/gpugraph/StyleSelector.cpp"
-
-    "source/gpugraph/NodeStyleAlgorithm.cpp" 
     "source/gpugraph/StyleHash.cpp"
+    "source/gpugraph/StyleBlock.cpp"
+    "source/gpugraph/NodeStyleAlgorithm.cpp" 
     
 )
 

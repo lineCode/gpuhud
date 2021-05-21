@@ -1,9 +1,11 @@
 #include "StyleCompiler.h"
 
 #include <css/parser.hpp>
-#include "StyleSelector.h"
-#include "Node.h"
 
+#include "Style.h"
+#include "StyleSelector.h"
+#include "StyleBlock.h"
+#include "Node.h"
 #include "log.h"
 
 namespace gpugraph
@@ -37,28 +39,6 @@ namespace gpugraph
             return a->selector->specificity() < b->selector->specificity();
         });
         return linkable_blocks;
-    }
-
-    Style::Block::Block(std::shared_ptr<Selector> selector, Styling styling)
-        : selector(std::move(selector))
-        , styling(std::move(styling))
-    {
-    }
-
-    namespace
-    {
-        std::string stringify(std::set<std::string> const& hash)
-        {
-            std::string str;
-            for (auto& element : hash)
-                str += element;
-            return str;
-        }
-    }
-
-    bool Style::Block::can_be_linked_to(Node const& node)
-    {
-        return selector->path().back().style_hash.is_subset_of(node.style_hash());
     }
 
 }
