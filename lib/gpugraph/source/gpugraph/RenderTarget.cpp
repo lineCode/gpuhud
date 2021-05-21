@@ -92,6 +92,8 @@ namespace gpugraph
         _tile_count_x = (width + tw - 1) / tw;
         _tile_count_y = (height + tw - 1) / tw;
 
+        log_debug("create render target: " << _tile_count_x << "x" << _tile_count_y << " tiles");
+
         auto tile_count = static_cast<std::size_t>(_tile_count_x * _tile_count_y);
         _framebuffer_objects.resize(tile_count);
         _texture_attachments.resize(tile_count);
