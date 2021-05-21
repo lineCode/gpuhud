@@ -3,6 +3,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 
+#include "log.h"
 #include "Program.h"
 
 
@@ -12,6 +13,7 @@ namespace gpugraph
     RenderTarget::BlitProgram::BlitProgram()
         : Program({
         VertexShader(R"source(
+            #version 330
             uniform mat4 transform;
 
             in vec2 position;
@@ -26,6 +28,7 @@ namespace gpugraph
             }
         )source"),
         FragmentShader(R"source(
+            #version 330
             uniform sampler2D texture;
             in vec2 tex;
             void main()
@@ -38,6 +41,7 @@ namespace gpugraph
         , position(this, "position")
         , texture_coord(this, "texture_coord")
     {
+        log_debug("created blit program");
     }
 
     std::unique_ptr<RenderTarget::Tile> RenderTarget::create_tile(std::size_t base_index, rect rect)
@@ -281,7 +285,6 @@ namespace gpugraph
         glBindBuffer(GL_ARRAY_BUFFER, _render_target->_vertex_buffer);
         program.position.set(2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
         program.texture_coord.set(2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, sizeof(float) * 2);
-
 
         glActiveTexture(GL_TEXTURE0);
         auto texture_id = _render_target->_texture_attachments.at(_base_index);

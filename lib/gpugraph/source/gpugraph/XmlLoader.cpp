@@ -6,6 +6,7 @@
 
 #include "Node.h"
 #include "string_utils.h"
+#include "log.h"
 
 namespace gpugraph
 {
@@ -28,7 +29,8 @@ namespace gpugraph
 
             bool VisitEnter(const tinyxml2::XMLElement& element, const tinyxml2::XMLAttribute* attribute) override
             {
-                auto node = gpugraph::Node::create();
+                auto node = gpugraph::Node::create(element.Name());
+                log_debug("created node \"" << element.Name() << "\"");
                 if (_root_node)
                     _stack.back()->add(node);
                 else
@@ -43,7 +45,7 @@ namespace gpugraph
                         for (auto& class_ : tokenize(value, "\\s+"))
                             node->add_class(std::move(class_));
                     }
-                    else if(name == "id")
+                    else if (name == "id")
                     {
                         node->set_id(attribute->Value());
                     }
@@ -51,20 +53,20 @@ namespace gpugraph
                 }
                 return true;
             }
-            
+
             bool VisitExit(const tinyxml2::XMLElement& element) override
             {
                 _stack.pop_back();
                 return true;
             }
 
-            virtual bool Visit(const tinyxml2::XMLDeclaration& declaration) 
+            virtual bool Visit(const tinyxml2::XMLDeclaration& declaration)
             {
                 // ?
                 return true;
             }
 
-            virtual bool Visit(const tinyxml2::XMLText& text) 
+            virtual bool Visit(const tinyxml2::XMLText& text)
             {
                 _stack.back()->set_text_content(text.Value());
                 return true;

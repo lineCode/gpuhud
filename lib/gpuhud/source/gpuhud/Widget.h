@@ -11,11 +11,11 @@ namespace gpuhud
     class Widget
     {
     public:
-        Widget();
+        Widget(std::shared_ptr<gpugraph::Node> = nullptr);
 
         std::shared_ptr<gpugraph::Node> const& root_node();
     
-    private:
+    protected:
         std::shared_ptr<gpugraph::Node> _root_node;
     };
 

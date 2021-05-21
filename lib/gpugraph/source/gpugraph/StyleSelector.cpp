@@ -1,6 +1,10 @@
 #include "Style.h"
 #include "StyleSelector.h"
 
+#include <iostream>
+
+#include "log.h"
+
 namespace gpugraph
 {
 
@@ -30,9 +34,10 @@ namespace gpugraph
             _path.push_back({ item.combinator, std::move(combined) });
         }
         _specificity = sa << 32 | sb << 16 | sc << 0;
+        log_debug("created selector (sa=" << sa << ", sb=" << sb << ", sc=" << sc << "): " << definition);
     }
 
-    std::uint32_t Style::Selector::specificity() const
+    std::uint64_t Style::Selector::specificity() const
     {
         return _specificity;
     }

@@ -11,9 +11,10 @@ namespace gpugraph
 
     void Style::Compiler::handle_begin_block(css::selector_list selectors)
     {
+        _selectors.clear();
         _selectors.resize(selectors.size());
         std::transform(selectors.begin(), selectors.end(), _selectors.begin(), [](auto& source) {
-            return std::make_shared<Selector>(std::move(source));
+            return std::make_shared<Selector>(source);
         });
     }
 

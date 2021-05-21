@@ -13,7 +13,7 @@ namespace gpugraph
 
         Selector(css::selector const&);
 
-        std::uint32_t specificity() const;
+        std::uint64_t specificity() const;
 
         Path const& path() const;
 

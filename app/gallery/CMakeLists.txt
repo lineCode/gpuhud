@@ -12,4 +12,9 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_SOURCE_DIR}/app/gallery/assets/style.css
                 ${CMAKE_CURRENT_BINARY_DIR}/style.css)
+add_custom_command(
+        TARGET gallery POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_SOURCE_DIR}/app/gallery/assets/tree.xml
+                ${CMAKE_CURRENT_BINARY_DIR}/tree.xml)
 target_link_libraries(gallery PRIVATE lib_gpuhud glad glm)

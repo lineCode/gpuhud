@@ -16,7 +16,7 @@ add_library(
     "source/gpugraph/StyleCompiler.cpp" 
     "source/gpugraph/StyleSelector.cpp"
 
-)
+ "source/gpugraph/NodeStylePass.h" "source/gpugraph/NodeStylePass.cpp" "source/gpugraph/log.h")
 
 set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 20)
 

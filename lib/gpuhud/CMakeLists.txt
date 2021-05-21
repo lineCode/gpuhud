@@ -7,6 +7,8 @@ add_library(
     "source/gpuhud/ChildWindow.cpp"
     "source/gpuhud/Widget.cpp"
     "source/gpuhud/Container.cpp"
+    "source/gpuhud/NodeTree.cpp"
+    
 )
 
 target_include_directories(lib_gpuhud PUBLIC source)

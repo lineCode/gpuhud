@@ -25,6 +25,7 @@ namespace gpugraph
 
         void add(std::shared_ptr<Node>);
         void remove(std::shared_ptr<Node> const&);
+        void clear();
 
         Node& set_id(std::string);
         std::string const& id() const;
@@ -56,12 +57,18 @@ namespace gpugraph
         std::vector<std::shared_ptr<Node>>::iterator end();
 
         void set_style(std::shared_ptr<Style>);
+        std::set<std::string> const& style_hash() const;
 
     protected:
         Node(std::string type);
 
     private:
+        struct StylePass;
+        struct UpdatePass;
+        struct RenderPass;
+
         std::shared_ptr<Style> _style;
+        std::set<std::string> _style_hash;
 
         bool _layout_changed = true;
         bool _force_intermediate = false;
@@ -96,12 +103,6 @@ namespace gpugraph
         //
         // (calculated) state
         std::shared_ptr<State> _state;
-
-    private:
-
-        //
-        // algorithms
-        void compute_content_properties(bool recursive);
     };
 
     inline std::size_t Node::size() const

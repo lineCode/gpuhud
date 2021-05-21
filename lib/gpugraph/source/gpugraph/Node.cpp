@@ -2,6 +2,7 @@
 #include "NodeState.h"
 #include "Intermediate.h"
 #include "Style.h"
+#include "NodeStylePass.h"
 
 namespace gpugraph
 {
@@ -22,7 +23,8 @@ namespace gpugraph
     {
         _children.push_back(node);
         node->_parent = this;
-        node->compute_content_properties(true);
+        node->_style = _style;
+        StylePass()(*node);
     }
 
     void Node::remove(std::shared_ptr<Node> const& node)
@@ -30,6 +32,11 @@ namespace gpugraph
         _children.erase(std::remove_if(_children.begin(), _children.end(), [&](auto& child) {
             return node == child;
         }), _children.end());
+    }
+
+    void Node::clear()
+    {
+        _children.clear();
     }
 
     Node& Node::set_id(std::string value)
@@ -96,20 +103,12 @@ namespace gpugraph
                 accept(visitor);
     }
 
-    void Node::compute_content_properties(bool recursive)
-    {
-        if (recursive)
-        {
-            for (auto& child : _children)
-                child->compute_content_properties(true);
-        }
-    }
-
     void Node::set_style(std::shared_ptr<Style> style)
     {
         if (!style)
             return;
         _style = std::move(style);
+        StylePass()(*this);
         // TODO: apply this
     }
 

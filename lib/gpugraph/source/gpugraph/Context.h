@@ -8,8 +8,6 @@
 #include <skia.h>
 #pragma warning(pop)
 
-// #include "attributes.h"
-
 namespace gpugraph
 {
 

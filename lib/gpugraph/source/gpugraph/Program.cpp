@@ -136,13 +136,17 @@ namespace gpugraph
     {
     }
 
-    Program::Shader::~Shader() {}
+    Program::Shader::~Shader() 
+    {
+        if(_compiled)
+            glDeleteShader(_handle);
+    }
 
     Program::Program() 
     {
         _handle = glCreateProgram();
         if (!_handle)
-            throw std::runtime_error("Impossible to create a new shader program");
+            throw std::runtime_error("could not create program");
     }
 
     Program::Program(std::vector<Shader> shaderList)

@@ -3,8 +3,8 @@
 namespace gpuhud
 {
 
-    Widget::Widget()
-        :_root_node(gpugraph::Node::create())
+    Widget::Widget(std::shared_ptr<gpugraph::Node> root_node)
+        : _root_node(root_node ? root_node : gpugraph::Node::create())
     {
     }
 

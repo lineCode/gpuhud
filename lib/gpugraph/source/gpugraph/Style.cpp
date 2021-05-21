@@ -14,7 +14,7 @@ namespace gpugraph
 
     Style::Styling Style::make_styling(Node const&) const
     {
-        throw "";
+        return Style::Styling();
     }
 
 }
