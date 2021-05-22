@@ -1,12 +1,13 @@
 # GpuHud
 
-Highly portable C++ / Python - Gui based on CSS, Skia & ImPlot
+Portable C++ - Gui based on CSS, Skia & ImPlot
 
 Design Goals:
 * Easy to Learn & Rapid Development: Use existing, well known CSS-specification and provide only lightweight additional API's.
-* Be Performant: Hardware-Acceleration & Tiled Rendering
+* Performant: Hardware-Acceleration & Tiled Rendering
 * Combine Exciting Projects: [Skia-Python](https://pypi.org/project/skia-python/), [ImPlot](https://github.com/epezent/implot) ...
 * Look Pretty: Use Skia's facilities for drawing smooth 2D-objects etc.
+* Python-Bindings
 
 ## Build Instructions:
 Skia needs to be compiled first.
