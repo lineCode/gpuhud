@@ -35,13 +35,9 @@ namespace gpugraph
     {
         auto it = _attributes.find(name);
         if (it == _attributes.end())
-        {
             return std::string();
-        }
         else
-        {
             return it->second.first();
-        }
     }
 
 }
