@@ -13,6 +13,11 @@ namespace gpugraph
         , _style_collection(std::make_shared<StyleCollection>())
     {
         _style_hash.insert_type(_type);
+        add_attribute("class", [this]() {
+            return "";
+        }, [this](std::string value) {
+            // ...
+        });
     }
             
     std::string const& Node::type() const
@@ -145,4 +150,3 @@ namespace gpugraph
     }
 
 }
-

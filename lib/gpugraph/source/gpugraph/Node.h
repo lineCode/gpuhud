@@ -11,6 +11,7 @@
 #include "log.h"
 #include "StyleHash.h"
 #include "NodeState.h"
+#include "Attributed.h"
 
 namespace gpugraph
 {
@@ -23,6 +24,7 @@ namespace gpugraph
 
     class Node 
         : private NodeState
+        , public Attributed
         , public std::enable_shared_from_this<Node>
     {
     public:
@@ -108,8 +110,8 @@ namespace gpugraph
         Styling _styling;
         std::shared_ptr<StyleBlock> _style;
 
-        std::string _id;
         std::string _type;
+        std::string _id;
         std::set<std::string> _class_set;
 
         //
