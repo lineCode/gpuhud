@@ -9,7 +9,7 @@ namespace gpugraph
 {
 
     class Node;
-    struct StyleBlock;
+    class StyleBlock;
     using Styling = std::vector<std::shared_ptr<StyleBlock>>;
 
     class StyleCollection

@@ -13,10 +13,9 @@ namespace gpugraph
 
     void StyleCollection::compile(std::string const& source)
     {
-        StyleCompiler compiler([this](auto block) {
-            _hash[block->selector->path().back().style_hash.key()].insert(block);
-        });
-        css::parser().parse(source, compiler);
+        StyleCompiler([this](auto block) {
+            _hash[block->selector()->path().back().style_hash.key()].insert(block);
+        }).compile(source);
     }
 
     Styling StyleCollection::extract_linkable_styling_for(Node const& node) const
@@ -38,7 +37,7 @@ namespace gpugraph
                     linkable_blocks.push_back(block);
         }
         std::sort(linkable_blocks.begin(), linkable_blocks.end(), [](auto& a, auto& b) {
-            return a->selector->specificity() < b->selector->specificity();
+            return a->selector()->specificity() < b->selector()->specificity();
         });
         return linkable_blocks;
     }

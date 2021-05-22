@@ -6,19 +6,29 @@ namespace gpugraph
 {
 
     StyleBlock::StyleBlock(std::shared_ptr<StyleSelector> selector, std::vector<StyleRule> rules)
-        : selector(std::move(selector))
-        , rules(std::move(rules))
+        : _selector(std::move(selector))
+        , _rules(std::move(rules))
     {
     }
 
     bool StyleBlock::can_be_linked_to(Node const& node)
     {
-        return selector->path().back().style_hash.is_subset_of(node.style_hash());
+        return _selector->path().back().style_hash.is_subset_of(node.style_hash());
     }
 
     bool StyleBlock::is_applicable_to(Node const& node)
     {
-        return selector->is_selecting(node);
+        return _selector->is_selecting(node);
+    }
+
+    std::shared_ptr<StyleSelector> const& StyleBlock::selector() const
+    {
+        return _selector;
+    }
+
+    std::vector<StyleRule> const& StyleBlock::rules() const
+    {
+        return _rules;
     }
 
 }

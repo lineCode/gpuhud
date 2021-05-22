@@ -11,7 +11,7 @@ namespace gpugraph
 
     class Node;
 
-    struct StyleSelector
+    class StyleSelector
     {
     public:
 

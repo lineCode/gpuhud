@@ -7,8 +7,8 @@
 namespace gpugraph
 {
 
-    struct StyleSelector;
-    struct StyleBlock;
+    class StyleSelector;
+    class StyleBlock;
 
     class StyleCompiler : public css::parser::handler
     {
@@ -29,8 +29,6 @@ namespace gpugraph
     private:
         Sink _sink;
 
-        // 
-        // compile state
         std::vector<std::shared_ptr<StyleSelector>> _selectors;
         std::vector<StyleRule> _rules;
     };
