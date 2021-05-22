@@ -22,9 +22,9 @@ import os
 import argparse
 from pathlib2 import Path
 
-parser = argparse.ArgumentParser(description='add a header from a template to specified files')
+parser = argparse.ArgumentParser(description='add a header/license from a template to some files')
 
-parser.add_argument('template', type=str, help='template file')
+parser.add_argument('template', type=str, help='template file containing the license')
 
 parser.add_argument('-e', '--extensions', nargs='*',
                     help='list of file extensions (example: .hpp .cpp)')
@@ -33,10 +33,10 @@ parser.add_argument('-c', '--check-only', action='store_true',
                     help='do not modify any file, just check')
 
 parser.add_argument('-d', '--directories', nargs='*',
-                    help='sum the integers (default: find the max)')
+                    help='list of directories to parse')
 
 parser.add_argument('-r', '--remove', action='store_true',
-                    help='remove template')
+                    help='remove template from specified files')
 
 args = parser.parse_args()
 
