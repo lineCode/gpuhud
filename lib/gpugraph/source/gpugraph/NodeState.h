@@ -1,7 +1,6 @@
 #pragma once
 
 #include "types.h"
-#include "Node.h"
 #include "Rectangle.h"
 #include "Context.h" // for skia
 #include <css/parser.hpp>
@@ -13,16 +12,19 @@ namespace gpugraph
 
     using Bounds = Rectangle<float>;
 
-    struct Node::State
+    struct NodeState
     {
-
+        //
+        // hm ..
         bool visible;
-        real_t _opacity = 1.f;
+
+        //
+        // hierachical
         css::display display;
         css::position position; // <- defaulted?
         
         //
-        //
+        // interaction
         bool active= false;
         bool hovered= false;
         bool focused = false;
@@ -37,6 +39,7 @@ namespace gpugraph
         real_t width_max_content; // [px]
         real_t height_min_content; // [px]
         real_t height_max_content; // [px]
+
         bool layout_dirty = true;
         bool needs_redraw = true;
 
@@ -66,6 +69,7 @@ namespace gpugraph
                 BottomRight = 2,
                 BottomLeft = 3
             };
+            real_t _opacity = 1.f;
 
             std::array<std::optional<real_t>, 4> distance = std::array<std::optional<real_t>, 4>();
             std::array<real_t, 4> border_width = {0.f, 0.f, 0.f, 0.f};
@@ -79,7 +83,7 @@ namespace gpugraph
         // used for resetting the state
         static Defaulted defaults;
 
-        void inherit(State&);
+        void inherit(NodeState&);
         void reset();
     };
 

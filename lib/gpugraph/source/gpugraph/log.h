@@ -20,7 +20,6 @@ constexpr unsigned int __log_level_warn = 3;
 constexpr unsigned int __log_level_info = 4;
 constexpr unsigned int __log_level_debug = 5;
 
-
 namespace
 {
 

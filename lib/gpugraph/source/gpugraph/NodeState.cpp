@@ -3,15 +3,15 @@
 namespace gpugraph
 {
 
-    Node::State::Defaulted Node::State::defaults;
+    NodeState::Defaulted NodeState::defaults;
 
-    void Node::State::inherit(State& state)
+    void NodeState::inherit(NodeState& state)
     {
         // TODO: memcpy?
         inherited = state.inherited;
     }
 
-    void Node::State::reset()
+    void NodeState::reset()
     {
         // TODO: memcpy?
         defaulted = defaults;

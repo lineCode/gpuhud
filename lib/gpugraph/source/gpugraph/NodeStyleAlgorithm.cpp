@@ -35,7 +35,7 @@ void gpugraph::Node::StyleAlgorithm::apply_linked_styling(Node& node)
     {
         if (block->is_applicable_to(node))
         {
-            log_with_level(9, "apply \""<< block->selector()->definition() << "\" to node \"" << node._style_hash << "\"");
+            log_with_level(9, "apply \"" << block->selector()->definition() << "\" to node \"" << node._style_hash << "\"");
             for (auto& rule : block->rules())
                 rule(node);
         }

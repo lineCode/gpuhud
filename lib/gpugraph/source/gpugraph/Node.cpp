@@ -10,7 +10,6 @@ namespace gpugraph
 
     Node::Node(std::string type)
         : _type(type)
-        , _state(std::make_shared<State>())
         , _style_collection(std::make_shared<StyleCollection>())
     {
         _style_hash.insert_type(_type);
@@ -115,7 +114,7 @@ namespace gpugraph
 
     void Node::accept(StateVisitor visitor)
     {
-        if (visitor(*this, *_state))
+        if (visitor(*this))
             for (auto& child : _children)
                 accept(visitor);
     }

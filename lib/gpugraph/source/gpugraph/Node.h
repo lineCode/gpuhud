@@ -10,6 +10,7 @@
 #include "Context.h"
 #include "log.h"
 #include "StyleHash.h"
+#include "NodeState.h"
 
 namespace gpugraph
 {
@@ -20,7 +21,9 @@ namespace gpugraph
     
     using Styling = std::vector<std::shared_ptr<StyleBlock>>;
 
-    class Node : public std::enable_shared_from_this<Node>
+    class Node 
+        : private NodeState
+        , public std::enable_shared_from_this<Node>
     {
     public:
         struct State;
@@ -79,7 +82,7 @@ namespace gpugraph
 
         //
         // depth first traversal
-        using StateVisitor = std::function<bool(Node&, Node::State&)>;
+        using StateVisitor = std::function<bool(Node&)>;
         void accept(StateVisitor);
 
     protected:
@@ -117,10 +120,6 @@ namespace gpugraph
         //
         // text ..
         std::string _text_content;
-
-        //
-        // (calculated) state, this is a 1:1-relationship
-        std::shared_ptr<State> _state;
     };
 
     inline std::size_t Node::size() const
