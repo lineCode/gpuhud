@@ -1,6 +1,7 @@
 #ifndef __LOG_
 #define __LOG_
 
+#include <cstdint>
 #include <iostream>
 #include <filesystem>
 #include <algorithm>
@@ -11,14 +12,14 @@
 #  define LOG_LEVEL 100
 #endif
 
-constexpr unsigned int __log_level = LOG_LEVEL;
+constexpr std::uint32_t __log_level = LOG_LEVEL;
 
-constexpr unsigned int __log_level_none = 0;
-constexpr unsigned int __log_level_fatal = 1;
-constexpr unsigned int __log_level_error = 2;
-constexpr unsigned int __log_level_warn = 3;
-constexpr unsigned int __log_level_info = 4;
-constexpr unsigned int __log_level_debug = 5;
+constexpr std::uint32_t __log_level_none = 0;
+constexpr std::uint32_t __log_level_fatal = 1;
+constexpr std::uint32_t __log_level_error = 2;
+constexpr std::uint32_t __log_level_warn = 3;
+constexpr std::uint32_t __log_level_info = 4;
+constexpr std::uint32_t __log_level_debug = 5;
 
 namespace
 {

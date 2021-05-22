@@ -11,7 +11,7 @@
 
 #include <gpugraph/Intermediate.h>
 #include <gpugraph/util.h>
-#include <gpugraph/log.h>
+#include <gpugraph/log_level.h>
 
 #include "subsystem/GlfwSubsystem.h"
 
@@ -39,6 +39,7 @@ namespace gpuhud
         _context.make_current();
 
         auto root_node = this->root_node();
+        log_with_level(99, "node size: " << sizeof(gpugraph::Node) << "bytes");
         /* TODO
         root_node->set_left(0 | Length::px);
         root_node->set_top(0 | Length::px);
@@ -130,7 +131,7 @@ namespace gpuhud
 
             if (_frame_counter.increase())
             {
-                log_with_level(999, _frame_counter.frames_per_second() << " fps ");
+                log_with_level(log_level_renderer, _frame_counter.frames_per_second() << " fps ");
             }
         }
     }
