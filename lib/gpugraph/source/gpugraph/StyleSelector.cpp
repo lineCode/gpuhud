@@ -48,7 +48,7 @@ namespace gpugraph
         return _path;
     }
 
-    bool StyleSelector::is_selecting(Node const& node) const
+    bool StyleSelector::is_applicable_to(Node const& node) const
     {
         Node const* node_iterator = &node;
         auto it = _path.rbegin();

@@ -33,7 +33,7 @@ namespace gpugraph
             //
             // each block/entry in the hashed block-set is a valid candidate
             for (auto& block : it->second)
-                if(block->can_be_linked_to(node))
+                if(block->is_linkable_to(node))
                     linkable_blocks.push_back(block);
         }
         std::sort(linkable_blocks.begin(), linkable_blocks.end(), [](auto& a, auto& b) {

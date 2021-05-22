@@ -29,7 +29,7 @@ namespace gpugraph
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/cascade.html#specificity
         std::uint64_t specificity() const;
         Path const& path() const;
-        bool is_selecting(Node const&) const;
+        bool is_applicable_to(Node const&) const;
 
     private:
         css::selector _definition;

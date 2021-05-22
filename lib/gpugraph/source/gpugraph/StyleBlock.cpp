@@ -11,14 +11,14 @@ namespace gpugraph
     {
     }
 
-    bool StyleBlock::can_be_linked_to(Node const& node)
+    bool StyleBlock::is_linkable_to(Node const& node) const
     {
         return _selector->path().back().style_hash.is_subset_of(node.style_hash());
     }
 
-    bool StyleBlock::is_applicable_to(Node const& node)
+    bool StyleBlock::is_applicable_to(Node const& node) const
     {
-        return _selector->is_selecting(node);
+        return _selector->is_applicable_to(node);
     }
 
     std::shared_ptr<StyleSelector> const& StyleBlock::selector() const
