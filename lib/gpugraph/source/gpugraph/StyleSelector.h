@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <functional>
 #include <css/selector.hpp>
 
 #include "StyleHash.h"
@@ -8,7 +9,9 @@
 namespace gpugraph
 {
 
-    struct Style::Selector
+    class Node;
+
+    struct StyleSelector
     {
     public:
 
@@ -22,7 +25,7 @@ namespace gpugraph
 
         using Path = std::vector <PathItem>;
 
-        Selector(css::selector const&);
+        StyleSelector(css::selector const&);
 
         std::uint64_t specificity() const;
 

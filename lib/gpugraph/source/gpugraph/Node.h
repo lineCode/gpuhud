@@ -9,14 +9,16 @@
 #include "types.h"
 #include "Context.h"
 #include "log.h"
-#include "Style.h"
 #include "StyleHash.h"
 
 namespace gpugraph
 {
 
-    class Style;
     class Intermediate;
+
+    class StyleCollection;
+    struct StyleBlock;
+    using Styling = std::vector<std::shared_ptr<StyleBlock>>;
 
     class Node : public std::enable_shared_from_this<Node>
     {
@@ -56,7 +58,10 @@ namespace gpugraph
 
         //
         // set css style collection
-        void set_style(std::shared_ptr<Style>);
+        void set_style_collection(std::shared_ptr<StyleCollection>);
+
+        void set_own_style(std::string);
+        std::string const& own_style() const;
 
         //
         // used by the selector for optimizing the stylesheet linking,
@@ -95,9 +100,10 @@ namespace gpugraph
 
         //
         // styling
-        std::shared_ptr<Style> _style;
+        std::shared_ptr<StyleCollection> _style_collection;
         StyleHash _style_hash;
-        Style::Styling _styling;
+        Styling _styling;
+        std::shared_ptr<StyleBlock> _own_style_block;
 
         std::string _id;
         std::string _type;

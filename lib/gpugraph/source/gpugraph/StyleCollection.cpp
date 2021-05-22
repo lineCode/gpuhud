@@ -1,8 +1,8 @@
-#include "StyleCompiler.h"
+#include "StyleCollection.h"
 
 #include <css/parser.hpp>
 
-#include "Style.h"
+#include "StyleCompiler.h"
 #include "StyleSelector.h"
 #include "StyleBlock.h"
 #include "Node.h"
@@ -11,15 +11,17 @@
 namespace gpugraph
 {
 
-    void Style::compile(std::string const& source)
+    void StyleCollection::compile(std::string const& source)
     {
-        Compiler compiler(*this);
+        StyleCompiler compiler([this](auto block) {
+            _hash[block->selector->path().back().style_hash.key()].insert(block);
+        });
         css::parser().parse(source, compiler);
     }
 
-    Style::Styling Style::extract_linkable_styling_for(Node const& node) const
+    Styling StyleCollection::extract_linkable_styling_for(Node const& node) const
     {
-        std::vector<std::shared_ptr<Block>> linkable_blocks;
+        std::vector<std::shared_ptr<StyleBlock>> linkable_blocks;
         auto node_style_hash = node.style_hash().values();
         node_style_hash.insert(std::string());
         //

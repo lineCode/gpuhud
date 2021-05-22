@@ -1,7 +1,8 @@
 #include "Node.h"
 #include "NodeState.h"
 #include "Intermediate.h"
-#include "Style.h"
+#include "StyleCollection.h"
+#include "StyleCompiler.h"
 #include "NodeStyleAlgorithm.h"
 
 namespace gpugraph
@@ -10,7 +11,7 @@ namespace gpugraph
     Node::Node(std::string type)
         : _type(type)
         , _state(std::make_shared<State>())
-        , _style(std::make_shared<Style>())
+        , _style_collection(std::make_shared<StyleCollection>())
     {
         _style_hash.insert_type(_type);
     }
@@ -29,7 +30,7 @@ namespace gpugraph
     {
         _children.push_back(node);
         node->_parent = this;
-        node->_style = _style;
+        node->_style_collection = _style_collection;
         StyleAlgorithm().link_style_recursively(*node);
     }
 
@@ -119,11 +120,11 @@ namespace gpugraph
                 accept(visitor);
     }
 
-    void Node::set_style(std::shared_ptr<Style> style)
+    void Node::set_style_collection(std::shared_ptr<StyleCollection> style)
     {
         if (!style)
             return;
-        _style = std::move(style);
+        _style_collection = std::move(style);
         StyleAlgorithm().link_style_recursively(*this);
     }
 
@@ -135,6 +136,14 @@ namespace gpugraph
     Node const* Node::parent() const
     {
         return _parent;
+    }
+
+    void Node::set_own_style(std::string source) 
+    {
+        StyleCompiler compiler([this](auto block) {
+            _own_style_block = std::move(block);
+        });
+        css::parser().parse(source, compiler);
     }
 
 }

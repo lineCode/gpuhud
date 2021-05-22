@@ -4,8 +4,6 @@
 #include <string>
 #include <ostream>
 
-#include "Style.h"
-
 namespace gpugraph
 {
 

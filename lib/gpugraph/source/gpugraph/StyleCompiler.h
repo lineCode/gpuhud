@@ -1,16 +1,20 @@
 #pragma once
-#include "Style.h"
-#include "StyleCompiler.h"
 
 #include <css/parser.hpp>
+
+#include "StyleRule.h"
 
 namespace gpugraph
 {
 
-    class Style::Compiler : public css::parser::handler
+    struct StyleSelector;
+    struct StyleBlock;
+
+    class StyleCompiler : public css::parser::handler
     {
     public:
-        Compiler(Style&);
+        using Sink = std::function<void(std::shared_ptr<StyleBlock>)>;
+        StyleCompiler(Sink);
 
         void handle_begin_block(css::selector_list) override;
         void handle_end_block() override;
@@ -21,12 +25,12 @@ namespace gpugraph
         void handle_bottom(css::distance) override;
 
     private:
-        Style& _style;
-        
+        Sink _sink;
+
         // 
         // compile state
-        std::vector<std::shared_ptr<Selector>> _selectors;
-        std::vector<Rule> _rules;
+        std::vector<std::shared_ptr<StyleSelector>> _selectors;
+        std::vector<StyleRule> _rules;
     };
 
 

@@ -20,15 +20,16 @@ constexpr unsigned int __log_level_warn = 3;
 constexpr unsigned int __log_level_info = 4;
 constexpr unsigned int __log_level_debug = 5;
 
-inline std::string __log_format_file(std::string file)
-{    
-    std::transform(file.begin(), file.end(), file.begin(), [](auto c) { return std::tolower(c); });
-    std::filesystem::path path(file);
-    return path.stem().string() + path.extension().string();
-}
 
 namespace
 {
+
+    inline std::string __log_format_file(std::string file)
+    {    
+        std::transform(file.begin(), file.end(), file.begin(), [](auto c) { return std::tolower(c); });
+        std::filesystem::path path(file);
+        return path.stem().string() + path.extension().string();
+    }
 
     struct __log_start
     {

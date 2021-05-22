@@ -166,17 +166,17 @@ namespace gpuhud
             {
                 _style_last_write_time = time;
                 log_info("hot reloading \"" << _style_filename.value() << "\"");
-                auto style = std::make_shared<gpugraph::Style>();
+                auto style_collection = std::make_shared<gpugraph::StyleCollection>();
                 auto content = gpugraph::read_file(_style_filename.value().c_str());
                 try
                 {
-                    style->compile(content);
+                    style_collection->compile(content);
                 }
                 catch (std::runtime_error& e)
                 {
                     log_error("exception while loading style: " << e.what());
                 }
-                root_node()->set_style(style);
+                root_node()->set_style_collection(style_collection);
             }
         });
     }
@@ -192,9 +192,9 @@ namespace gpuhud
         _style_filename = filename;
         _style_last_write_time = fs::last_write_time(filename);
         auto content = gpugraph::read_file(filename.c_str());
-        auto style = std::make_shared<gpugraph::Style>();
-        style->compile(content);
-        root_node()->set_style(style);
+        auto style_collection = std::make_shared<gpugraph::StyleCollection>();
+        style_collection->compile(content);
+        root_node()->set_style_collection(style_collection);
     }
 
 }

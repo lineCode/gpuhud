@@ -7,7 +7,7 @@
 #include <filesystem>
 
 #include <gpugraph/Context.h>
-#include <gpugraph/Style.h>
+#include <gpugraph/StyleCollection.h>
 #include <gpugraph/util.h>
 
 #include "Subsystem.h"

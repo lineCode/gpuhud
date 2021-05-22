@@ -1,4 +1,3 @@
-#include "Style.h"
 #include "StyleSelector.h"
 
 #include <iostream>
@@ -9,7 +8,7 @@
 namespace gpugraph
 {
 
-    Style::Selector::Selector(css::selector const& definition)
+    StyleSelector::StyleSelector(css::selector const& definition)
         : _definition(definition)
     {
         std::uint64_t sa = 0 /* hash */;
@@ -39,17 +38,17 @@ namespace gpugraph
         log_debug("created selector (sa=" << sa << ", sb=" << sb << ", sc=" << sc << "): " << definition);
     }
 
-    std::uint64_t Style::Selector::specificity() const
+    std::uint64_t StyleSelector::specificity() const
     {
         return _specificity;
     }
 
-    Style::Selector::Path const& Style::Selector::path() const
+    StyleSelector::Path const& StyleSelector::path() const
     {
         return _path;
     }
 
-    bool Style::Selector::is_selecting(Node const& node) const
+    bool StyleSelector::is_selecting(Node const& node) const
     {
         Node const* node_iterator = &node;
         auto it = _path.rbegin();
@@ -86,7 +85,7 @@ namespace gpugraph
         return it == end;
     }
 
-    css::selector const& Style::Selector::definition() const
+    css::selector const& StyleSelector::definition() const
     {
         return _definition;
     }

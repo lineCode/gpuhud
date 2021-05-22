@@ -1,5 +1,5 @@
 #include "NodeStyleAlgorithm.h"
-#include "Style.h"
+#include "StyleCollection.h"
 #include "StyleBlock.h"
 #include "StyleSelector.h"
 
@@ -7,10 +7,10 @@
 
 void gpugraph::Node::StyleAlgorithm::link_style_recursively(Node& node)
 {
-    if (node._style == nullptr)
+    if (node._style_collection == nullptr)
         return;
     
-    node._styling = node._style->extract_linkable_styling_for(node);
+    node._styling = node._style_collection->extract_linkable_styling_for(node);
     //
     // way down
     log_with_level(9, "linked "<< node._styling.size() << " blocks to \"" << node._style_hash << "\"");
@@ -20,7 +20,7 @@ void gpugraph::Node::StyleAlgorithm::link_style_recursively(Node& node)
 
     for (auto& child : node._children)
     {
-        child->_style = node._style;
+        child->_style_collection = node._style_collection;
         this->link_style_recursively(*child);
     }
     //
@@ -40,4 +40,6 @@ void gpugraph::Node::StyleAlgorithm::apply_linked_styling(Node& node)
                 rule(node);
         }
     }
+    if(node._own_style_block) for (auto& rule : node._own_style_block->rules)
+        rule(node);
 }

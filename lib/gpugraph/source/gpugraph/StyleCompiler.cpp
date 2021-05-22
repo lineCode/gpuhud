@@ -9,37 +9,36 @@
 namespace gpugraph
 {
 
-    Style::Compiler::Compiler(Style& style)
-        : _style(style)
+    StyleCompiler::StyleCompiler(Sink sink)
+        : _sink(std::move(sink))
     {
     }
 
-    void Style::Compiler::handle_begin_block(css::selector_list selectors)
+    void StyleCompiler::handle_begin_block(css::selector_list selectors)
     {
         _rules.clear();
         _selectors.clear();
         _selectors.resize(selectors.size());
         std::transform(selectors.begin(), selectors.end(), _selectors.begin(), [&](auto& source) {
-            return std::make_shared<Selector>(source);
+            return std::make_shared<StyleSelector>(source);
         });
     }
 
-    void Style::Compiler::handle_end_block()
+    void StyleCompiler::handle_end_block()
     {
         for (auto& selector : _selectors)
         {
             //
             // compile selector and create block
-            auto block = std::make_shared<Block>(std::move(selector), _rules);
             //
             // insert block, empty hash values are allowed
-            _style._hash[block->selector->path().back().style_hash.key()].insert(block);
+            _sink(std::make_shared<StyleBlock>(std::move(selector), _rules));
         }
         _rules.clear();
         _selectors.clear();
     }
 
-    void Style::Compiler::handle_left(css::distance distance)
+    void StyleCompiler::handle_left(css::distance distance)
     {
         if (std::holds_alternative<css::cascade>(distance))
         {
@@ -49,17 +48,17 @@ namespace gpugraph
         }
     }
 
-    void Style::Compiler::handle_top(css::distance)
+    void StyleCompiler::handle_top(css::distance)
     {
         // ...
     }
 
-    void Style::Compiler::handle_right(css::distance)
+    void StyleCompiler::handle_right(css::distance)
     {
         // ...
     }
 
-    void Style::Compiler::handle_bottom(css::distance)
+    void StyleCompiler::handle_bottom(css::distance)
     {
         // ...
     }

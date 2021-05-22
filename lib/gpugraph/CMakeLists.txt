@@ -12,14 +12,14 @@ add_library(
     "source/gpugraph/SkiaRenderTarget.cpp"
     "source/gpugraph/XmlLoader.cpp"
     
-    "source/gpugraph/Style.cpp"
+    "source/gpugraph/StyleCollection.cpp"
     "source/gpugraph/StyleCompiler.cpp" 
     "source/gpugraph/StyleSelector.cpp"
     "source/gpugraph/StyleHash.cpp"
     "source/gpugraph/StyleBlock.cpp"
     "source/gpugraph/NodeStyleAlgorithm.cpp" 
     
-)
+    )
 
 set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 20)
 
