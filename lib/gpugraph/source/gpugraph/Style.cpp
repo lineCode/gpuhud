@@ -17,7 +17,7 @@ namespace gpugraph
         css::parser().parse(source, compiler);
     }
 
-    Style::Styling Style::extract_linkable_styling_of(Node const& node) const
+    Style::Styling Style::extract_linkable_styling_for(Node const& node) const
     {
         std::vector<std::shared_ptr<Block>> linkable_blocks;
         auto node_style_hash = node.style_hash().values();

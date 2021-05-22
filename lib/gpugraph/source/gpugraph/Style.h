@@ -20,7 +20,7 @@ namespace gpugraph
         using Styling = std::vector<std::shared_ptr<Block>>;
 
         void compile(std::string const&);
-        Styling extract_linkable_styling_of(Node const&) const;
+        Styling extract_linkable_styling_for(Node const&) const;
 
         std::unordered_map<std::string, std::shared_ptr<Block>>::const_iterator begin() const;
         std::unordered_map<std::string, std::shared_ptr<Block>>::const_iterator end() const;

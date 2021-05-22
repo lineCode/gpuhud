@@ -10,7 +10,7 @@ void gpugraph::Node::StyleAlgorithm::link_style_recursively(Node& node)
     if (node._style == nullptr)
         return;
     
-    node._styling = node._style->extract_linkable_styling_of(node);
+    node._styling = node._style->extract_linkable_styling_for(node);
     //
     // way down
     log_with_level(9, "linked "<< node._styling.size() << " blocks to \"" << node._style_hash << "\"");
