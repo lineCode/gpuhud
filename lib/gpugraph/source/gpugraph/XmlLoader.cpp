@@ -62,17 +62,7 @@ namespace gpugraph
                 _stack.push_back(node);
                 while (attribute)
                 {
-                    std::string name = attribute->Name();
-                    if (name == "class")
-                    {
-                        std::string value = attribute->Value();
-                        for (auto& class_ : tokenize(value, "\\s+"))
-                            node->add_class(std::move(class_));
-                    }
-                    else if (name == "id")
-                    {
-                        node->set_id(attribute->Value());
-                    }
+                    node->set_attribute(attribute->Name(), attribute->Value());
                     attribute = attribute->Next();
                 }
                 return true;

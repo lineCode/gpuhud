@@ -10,7 +10,7 @@
   furnished to do so, subject to the following conditions:
 
   The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software. 
+  copies or substantial portions of the Software.
 
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -27,41 +27,39 @@
 namespace gpugraph
 {
 
-    void Attributed::add_attribute(std::string name, AttributeGetter getter, AttributeSetter setter)
+    void Attributed::define_attribute(std::string name, AttributeGetter getter, AttributeSetter setter)
     {
-        _attributes[std::move(name)] = { std::move(getter), std::move(setter) };
+        _attributes[std::move(name)] = { std::move(getter), std::move(setter)};
     }
 
-    void Attributed::remove_attribute(std::string const& name)
-    {
-        _attributes.erase(name);
-    }
-
-    void Attributed::set_attribute(std::string const& name, std::string value)
+    void Attributed::set_attribute(std::string const& name, std::optional<std::string> value)
     {
         auto it = _attributes.find(name);
         if (it == _attributes.end())
         {
             auto _value = std::make_shared<std::string>();
-            _attributes[name] = { [_value]() {
-                return *_value;
-            }, [_value](std::string value) {
-                *_value = std::move(value);
+            _attributes[name] = { [=]() {
+                return std::optional<std::string>(*_value);
+            }, [=](std::optional<std::string> value) {
+                if (value)
+                    *_value = std::move(value.value());
+                else
+                    _attributes.erase(name);
             } };
+            on_after_dynamic_attribute_changed();
         }
         else
         {
-            it->second.second(std::move(value));
+            it->second.setter(std::move(value));
         }
     }
 
-    std::string Attributed::attribute(std::string const& name) const
+    std::optional<std::string> Attributed::attribute(std::string const& name) const
     {
         auto it = _attributes.find(name);
         if (it == _attributes.end())
-            return std::string();
-        else
-            return it->second.first();
+            return std::optional<std::string>();
+        return it->second.getter();
     }
 
 }

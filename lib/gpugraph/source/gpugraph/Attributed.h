@@ -10,7 +10,7 @@
   furnished to do so, subject to the following conditions:
 
   The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software. 
+  copies or substantial portions of the Software.
 
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,6 +25,7 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -35,19 +36,25 @@ namespace gpugraph
     class Attributed
     {
     public:
-        using AttributeGetter = std::function<std::string(void)>;
-        using AttributeSetter = std::function<void(std::string)>;
+        using AttributeGetter = std::function<std::optional<std::string>(void)>;
+        using AttributeSetter = std::function<void(std::optional<std::string>)>;
 
         class Attribute;
 
-        void add_attribute(std::string name, AttributeGetter, AttributeSetter);
-        void remove_attribute(std::string const&);
-        
-        void set_attribute(std::string const& name, std::string value);
-        std::string attribute(std::string const&) const;
+        void set_attribute(std::string const& name, std::optional<std::string> value);
+        std::optional<std::string> attribute(std::string const&) const;
+
+    protected:
+        void define_attribute(std::string name, AttributeGetter, AttributeSetter);
+        virtual void on_after_dynamic_attribute_changed() = 0;
 
     private:
-        std::unordered_map<std::string, std::pair<AttributeGetter, AttributeSetter>> _attributes;
+        struct AttributeImplementation
+        {
+            AttributeGetter getter;
+            AttributeSetter setter;
+        };
+        std::unordered_map<std::string, AttributeImplementation> _attributes;
     };
 
 }

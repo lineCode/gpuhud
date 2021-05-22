@@ -37,11 +37,19 @@ namespace gpugraph
         , _style_collection(std::make_shared<StyleCollection>())
     {
         _style_hash.insert_type(_type);
-        add_attribute("class", [this]() {
+        define_attribute("class", [this]() {
             return "";
-        }, [this](std::string value) {
+        }, [this](std::optional<std::string> value) {
             // ...
         });
+    }
+
+    void Node::on_after_dynamic_attribute_changed()
+    {
+    }
+
+    void Node::rebuilder_style_hash()
+    {
     }
             
     std::string const& Node::type() const
@@ -74,20 +82,6 @@ namespace gpugraph
     void Node::clear()
     {
         _children.clear();
-    }
-
-    // set attribute..
-    Node& Node::set_id(std::string value)
-    {
-        _style_hash.insert_id(value);
-        _id = std::move(value);
-        StyleAlgorithm().link_style_recursively(*this);
-        return *this;
-    }
-
-    std::string const& Node::id() const
-    {
-        return _id;
     }
 
     Node& Node::add_class(std::string class_)

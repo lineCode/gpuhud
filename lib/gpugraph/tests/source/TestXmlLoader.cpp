@@ -38,7 +38,7 @@ TEST(XmlLoader, test_tree_parse)
     ASSERT_NE(graph, nullptr);
     ASSERT_TRUE(graph->class_set().count("xyz") > 0);
     ASSERT_EQ(graph->size(), 1);
-    ASSERT_EQ(graph->at(0)->id(), "a");
+    ASSERT_EQ(graph->at(0)->attribute("id").value(), "a");
 }
 
 TEST(XmlLoader, test_whitespace_gets_trimmed_in_class_attribute)

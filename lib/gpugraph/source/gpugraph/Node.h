@@ -77,8 +77,6 @@ namespace gpugraph
 
         //
         // selector based styling
-        Node& set_id(std::string);
-        std::string const& id() const;
         std::string const& type() const;
 
         Node& add_class(std::string);
@@ -113,11 +111,14 @@ namespace gpugraph
 
     protected:
         Node(std::string type);
+        void on_after_dynamic_attribute_changed() override;
 
     private:
         struct StyleAlgorithm;
         // struct UpdatePass;
         // struct RenderPass;
+
+        void rebuilder_style_hash();
 
         //
         // force an intermediate with this node as root
