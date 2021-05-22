@@ -138,12 +138,11 @@ namespace gpugraph
         return _parent;
     }
 
-    void Node::set_own_style(std::string source) 
+    void Node::set_style(std::string source) 
     {
-        StyleCompiler compiler([this](auto block) {
-            _own_style_block = std::move(block);
-        });
-        css::parser().parse(source, compiler);
+        StyleCompiler([this](auto block) {
+            _style = std::move(block);
+        }).compile(source);
     }
 
 }

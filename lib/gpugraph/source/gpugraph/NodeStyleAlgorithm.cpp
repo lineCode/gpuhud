@@ -40,6 +40,6 @@ void gpugraph::Node::StyleAlgorithm::apply_linked_styling(Node& node)
                 rule(node);
         }
     }
-    if(node._own_style_block) for (auto& rule : node._own_style_block->rules)
+    if(node._style) for (auto& rule : node._style->rules)
         rule(node);
 }

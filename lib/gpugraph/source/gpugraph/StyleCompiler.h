@@ -16,6 +16,8 @@ namespace gpugraph
         using Sink = std::function<void(std::shared_ptr<StyleBlock>)>;
         StyleCompiler(Sink);
 
+        void compile(std::string const&);
+
         void handle_begin_block(css::selector_list) override;
         void handle_end_block() override;
 

@@ -60,8 +60,8 @@ namespace gpugraph
         // set css style collection
         void set_style_collection(std::shared_ptr<StyleCollection>);
 
-        void set_own_style(std::string);
-        std::string const& own_style() const;
+        void set_style(std::string);
+        std::string const& style() const;
 
         //
         // used by the selector for optimizing the stylesheet linking,
@@ -103,7 +103,7 @@ namespace gpugraph
         std::shared_ptr<StyleCollection> _style_collection;
         StyleHash _style_hash;
         Styling _styling;
-        std::shared_ptr<StyleBlock> _own_style_block;
+        std::shared_ptr<StyleBlock> _style;
 
         std::string _id;
         std::string _type;

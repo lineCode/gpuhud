@@ -63,4 +63,9 @@ namespace gpugraph
         // ...
     }
 
+    void StyleCompiler::compile(std::string const& source)
+    {
+        css::parser().parse(source, *this);
+    }
+
 }
