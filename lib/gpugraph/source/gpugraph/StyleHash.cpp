@@ -1,5 +1,4 @@
 /***************************************************************************//*/
-
   Copyright (c) 2021 Martin Rudoff
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,7 +18,6 @@
   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
-
 /******************************************************************************/
 
 #include "StyleHash.h"
@@ -74,6 +72,11 @@ namespace gpugraph
         return (std::all_of(_values.begin(), _values.end(), [&](auto& value) {
             return other._values.count(value) > 0;
         }));
+    }
+
+    void StyleHash::clear()
+    {
+        _values.clear();
     }
 
     std::set<std::string> const& StyleHash::values() const

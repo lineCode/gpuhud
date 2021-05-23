@@ -49,6 +49,8 @@ namespace gpugraph
 
         bool is_subset_of(StyleHash const&) const;
 
+        void clear();
+
         std::set<std::string> const& values() const;
 
     private:

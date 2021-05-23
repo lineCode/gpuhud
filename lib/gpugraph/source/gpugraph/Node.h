@@ -81,7 +81,7 @@ namespace gpugraph
 
         Node& add_class(std::string);
         Node& remove_class(std::string const&);
-        std::set<std::string> const& class_set() const;
+        std::optional<std::set<std::string>> const& class_set() const;
 
         //
         // set css style collection
@@ -118,7 +118,7 @@ namespace gpugraph
         // struct UpdatePass;
         // struct RenderPass;
 
-        void rebuilder_style_hash();
+        void rebuild_style_hash();
 
         //
         // force an intermediate with this node as root
@@ -136,8 +136,9 @@ namespace gpugraph
         std::shared_ptr<StyleBlock> _style;
 
         std::string _type;
-        std::string _id;
-        std::set<std::string> _class_set;
+
+        std::optional<std::string> _id;
+        std::optional<std::set<std::string>> _class_set;
 
         //
         // tree structure
