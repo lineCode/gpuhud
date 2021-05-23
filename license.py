@@ -46,7 +46,7 @@ with open(args.template) as f:
     template = f.read()
 
 
-def make_license(path):
+def update_license(path):
     with open(path.as_posix()) as f:
         content = f.read()
         is_present = content[0:len(template)] == template
@@ -73,4 +73,4 @@ for directory in args.directories:
         for filename in filenames:
             path = Path(current_dir).joinpath(filename)
             if path.suffix in args.extensions:
-                make_license(path)
+                update_license(path)
