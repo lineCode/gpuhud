@@ -1,6 +1,5 @@
 # GpuHud
-
-Portable C++ - Gui based on CSS, Skia & ImPlot
+C++ - Gui based on CSS, Skia & ImPlot
 
 Design Goals:
 * Easy to Learn & Rapid Development: Use existing, well known CSS-specification and provide only lightweight additional API's.
