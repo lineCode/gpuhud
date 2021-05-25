@@ -52,7 +52,6 @@ namespace gpugraph
             bool VisitEnter(const tinyxml2::XMLElement& element, const tinyxml2::XMLAttribute* attribute) override
             {
                 auto node = gpugraph::Node::create(element.Name());
-                log_debug("created node \"" << element.Name() << "\"");
                 if (_root_node)
                     _stack.back()->add(node);
                 else
@@ -63,6 +62,7 @@ namespace gpugraph
                     node->set_attribute(attribute->Name(), attribute->Value());
                     attribute = attribute->Next();
                 }
+                log_debug("created node \"" << node->type() << "\"");
                 return true;
             }
 
@@ -80,7 +80,10 @@ namespace gpugraph
 
             virtual bool Visit(const tinyxml2::XMLText& text)
             {
-                _stack.back()->set_text_content(text.Value());
+                auto node = Node::create("#text");
+                node->set_text_content(text.Value());
+                _stack.back()->add(node);
+                log_debug("added text node: \"" << text.Value() << "\"");
                 return true;
             }
 

@@ -24,5 +24,7 @@
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
+    std::stringstream buffer;
+    std::cout.rdbuf(buffer.rdbuf());    
     return RUN_ALL_TESTS();
 }

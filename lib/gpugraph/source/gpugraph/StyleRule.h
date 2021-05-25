@@ -28,7 +28,8 @@ namespace gpugraph
 {
 
     class Node;
+    class ComputedStyleSet;
 
-    using StyleRule = std::function<void(Node&)>;
+    using StyleRule = std::function<void(ComputedStyleSet const&, ComputedStyleSet&)>;
 
 }

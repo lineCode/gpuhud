@@ -19,7 +19,9 @@ add_library(
     "source/gpugraph/StyleBlock.cpp"
     "source/gpugraph/NodeStyleAlgorithm.cpp"     
     "source/gpugraph/Attributed.cpp"
-
+    "source/gpugraph/ComputedStyleSet.cpp"
+    "source/gpugraph/NodeLayoutAlgorithm.cpp"
+    
 )
 
 set_property(TARGET lib_gpugraph PROPERTY CXX_STANDARD 20)

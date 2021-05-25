@@ -43,10 +43,23 @@ namespace gpugraph
         void handle_begin_block(css::selector_list) override;
         void handle_end_block() override;
 
-        void handle_left(css::distance) override;
-        void handle_top(css::distance) override;
-        void handle_right(css::distance) override;
-        void handle_bottom(css::distance) override;
+        void handle_position(css::cascadable<css::position>) override;
+        void handle_display(css::cascadable<css::display>) override;
+
+        void handle_width(css::cascadable<css::distance>) override;
+        void handle_height(css::cascadable<css::distance>) override;
+
+        void handle_left(css::cascadable<css::distance>) override;
+        void handle_top(css::cascadable<css::distance>) override;
+        void handle_right(css::cascadable<css::distance>) override;
+        void handle_bottom(css::cascadable<css::distance>) override;
+
+        void handle_font_style(css::cascadable<css::font_style>) override;
+        void handle_font_size(css::cascadable<css::font_size>) override;
+        void handle_font_family(css::cascadable<css::font_family>) override;
+
+        void handle_color(css::cascadable<css::color>) override;
+        void handle_background_color(css::cascadable<css::background_color>) override;
 
     private:
         Sink _sink;

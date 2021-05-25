@@ -27,6 +27,9 @@
 
 #include "log.h"
 
+//TODO: word-wrap: nowrap
+// width: min-content: width!
+// min-content-height: computed..
 void gpugraph::Node::StyleAlgorithm::link_style_recursively(Node& node)
 {
     if (node._style_collection == nullptr)
@@ -45,6 +48,8 @@ void gpugraph::Node::StyleAlgorithm::link_style_recursively(Node& node)
         child->_style_collection = node._style_collection;
         this->link_style_recursively(*child);
     }
+
+    node.state.force_layout = node.state.force_redraw = true;
     //
     // way back during depth first traversal
     // TODO: .. compute content ..
@@ -52,16 +57,22 @@ void gpugraph::Node::StyleAlgorithm::link_style_recursively(Node& node)
 
 void gpugraph::Node::StyleAlgorithm::apply_linked_styling(Node& node)
 {
-    // 1) apply
+    node._computed_style_set.clear();
+
+    auto parent_style = node._parent ? node._parent->computed_style_set() : ComputedStyleSet::Initial;
+
     for (auto& block : node._styling)
     {
         if (block->is_applicable_to(node))
         {
+            //
+            // this performs the cascade and the result is in _computed_style_set
             log_with_level(9, "apply \"" << block->selector()->definition() << "\" to node \"" << node._style_hash << "\"");
-            for (auto& rule : block->rules())
-                rule(node);
+            block->apply_to(parent_style, node._computed_style_set);
         }
     }
-    if(node._style) for (auto& rule : node._style->rules())
-        rule(node);
+    //
+    // style - attribute:
+    if(node._style)
+        node._style->apply_to(parent_style, node._computed_style_set);
 }

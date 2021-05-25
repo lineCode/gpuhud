@@ -34,6 +34,14 @@
 #  define LOG_LEVEL 100
 #endif
 
+
+//
+// later:
+// class LogSink
+// {
+//     virtual void log(std::uint32_t level, std::string filename, std::uint32_t line, std::string message) = 0;
+// };
+
 constexpr std::uint32_t __log_level = LOG_LEVEL;
 
 constexpr std::uint32_t __log_level_none = 0;

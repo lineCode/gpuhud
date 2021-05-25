@@ -62,6 +62,7 @@ namespace gpuhud
 
         auto root_node = this->root_node();
         log_with_level(99, "node size: " << sizeof(gpugraph::Node) << "bytes");
+        log_with_level(99, "distance size: " << sizeof(css::distance) << "bytes");
         /* TODO
         root_node->set_left(0 | Length::px);
         root_node->set_top(0 | Length::px);
@@ -74,6 +75,26 @@ namespace gpuhud
         root_node->set_force_intermediate(true);
         // glEnable( GL_DEBUG_OUTPUT );
         // glDebugMessageCallback( MessageCallback, 0 );
+    }
+
+    void Window::make_root_node_fill_window()
+    {
+        auto width = _subsystem_window->width();
+        auto height = _subsystem_window->height();
+        auto& style = root_node()->computed_style_set();
+        if (style.contains<gpugraph::ComputedStyle::Width>() && style.contains<gpugraph::ComputedStyle::Height>())
+        {
+            auto& computed_width = style.get < gpugraph::ComputedStyle::Width>()->value();
+            auto& computed_height = style.get < gpugraph::ComputedStyle::Height>()->value();
+            if (std::holds_alternative<css::length>(computed_width)
+                && std::holds_alternative<css::length>(computed_height)
+                && std::get<css::length>(computed_width) == (width | css::length_unit::px)
+                && std::get<css::length>(computed_height) == (height |css::length_unit::px))
+                return;
+        }
+        root_node()->set_style(
+            "width:" + css::to_string(width|css::length_unit::px) + ";"  +
+            "height:" + css::to_string(height|css::length_unit::px));
     }
 
     void Window::loop()
@@ -98,6 +119,7 @@ namespace gpuhud
             /*TODO root_node->set_width(width | Length::px);
             root_node->set_height(height | Length::px);
             */
+            make_root_node_fill_window();
             root_node->intermediate()->set_size(width, height);
 
             auto const& tiles = root_node->intermediate()->render_target().tiles();
@@ -149,7 +171,7 @@ namespace gpuhud
             _subsystem_window->poll_events();
 
             while (glGetError() != GL_NO_ERROR)
-                std::cerr << "opengl usage is erroneous, debug it!" << std::endl;
+                log_error("opengl usage is erroneous!")
 
             if (_frame_counter.increase())
             {

@@ -36,81 +36,22 @@ namespace gpugraph
 
     struct NodeState
     {
-        //
-        // hm ..
-        bool visible;
-
-        //
-        // hierachical
-        css::display display;
-        css::position position; // <- defaulted?
-        
-        //
-        // interaction
-        bool active= false;
-        bool hovered= false;
-        bool focused = false;
-
-        //
-        // computed
-        // real_t width = 0.f;
-        // real_t height = 0.f;
-        Bounds border_box;
-        Bounds content_box;
-        real_t width_min_content; // [px]
-        real_t width_max_content; // [px]
-        real_t height_min_content; // [px]
-        real_t height_max_content; // [px]
-
-        bool layout_dirty = true;
-        bool needs_redraw = true;
-
-        struct Inherited
+        struct
         {
+            bool visible = true;
+            bool active = false;
+            bool hovered = false;
+            bool focused = false;
 
-            gpugraph::color color;
-            std::shared_ptr<SkFont> font;
-        
-        } inherited;
+            Bounds border_box;
+            Bounds content_box;
 
-        struct Defaulted
-        {
-
-            enum Edge
-            {
-                Left = 0,
-                Top = 1,
-                Right = 2,
-                Bottom = 3
-            };
-
-            enum Corner
-            {
-                TopLeft = 0,
-                TopRight = 1,
-                BottomRight = 2,
-                BottomLeft = 3
-            };
-            real_t _opacity = 1.f;
-
-            std::array<std::optional<real_t>, 4> distance = std::array<std::optional<real_t>, 4>();
-            std::array<real_t, 4> border_width = {0.f, 0.f, 0.f, 0.f};
-            std::array<real_t, 4> border_radius = {0.f, 0.f, 0.f, 0.f};
-            std::array<real_t, 4> margin = {0.f, 0.f, 0.f, 0.f};
-            std::array<real_t, 4> padding = {0.f, 0.f, 0.f, 0.f};
-
-        } defaulted;
-
-        //
-        // used for resetting the state
-        static Defaulted defaults;
-
-        void inherit(NodeState&);
-        void reset();
+            bool force_layout = true;
+            bool force_redraw = true;
+        } state;
     };
 
 }
-
 
 /* (default) inheritance of properties (~ :-) ):
             DONE

@@ -6,7 +6,8 @@ add_executable(
     "source/TestXmlLoader.cpp"
     
     "source/main.cpp"
-)
+    "source/TestStyling.cpp"
+ )
 set_property(TARGET gpugraph_tests PROPERTY CXX_STANDARD 20)
 
 add_test(NAME gpugraph_tests COMMAND gpugraph_tests)

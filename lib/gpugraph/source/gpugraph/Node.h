@@ -35,6 +35,8 @@
 #include "NodeState.h"
 #include "Attributed.h"
 
+#include "ComputedStyleSet.h"
+
 namespace gpugraph
 {
 
@@ -107,14 +109,18 @@ namespace gpugraph
         using StateVisitor = std::function<bool(Node&)>;
         void accept(StateVisitor);
 
+        ComputedStyleSet const& computed_style_set() const;
+
+
+        void paint_to();
+
     protected:
         Node(std::string type);
         void on_after_dynamic_attribute_changed() override;
 
     private:
         struct StyleAlgorithm;
-        // struct UpdatePass;
-        // struct RenderPass;
+        struct LayoutAlgorithm;
 
         void rebuild_style_hash();
 
@@ -128,6 +134,8 @@ namespace gpugraph
 
         //
         // styling
+        ComputedStyleSet _computed_style_set;
+
         std::shared_ptr<StyleCollection> _style_collection;
         StyleHash _style_hash;
         Styling _styling;
@@ -192,5 +200,7 @@ namespace gpugraph
         }
         return _children.at(index);
     }
+
+
 
 }

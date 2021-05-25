@@ -9,7 +9,7 @@
   furnished to do so, subject to the following conditions:
 
   The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software. 
+  copies or substantial portions of the Software.
 
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -33,7 +33,7 @@ namespace gpugraph
 
     Node::Node(std::string type)
         : _type(type)
-        , _style_collection(std::make_shared<StyleCollection>())
+        , _style_collection(nullptr)
     {
         _style_hash.insert_type(_type);
 
@@ -93,7 +93,10 @@ namespace gpugraph
         _children.push_back(node);
         node->_parent = this;
         node->_style_collection = _style_collection;
-        StyleAlgorithm().link_style_recursively(*node);
+        if (_style_collection)
+        {
+            StyleAlgorithm().link_style_recursively(*node);
+        }
     }
 
     void Node::remove(std::shared_ptr<Node> const& node)
@@ -175,7 +178,8 @@ namespace gpugraph
         if (!style)
             return;
         _style_collection = std::move(style);
-        StyleAlgorithm().link_style_recursively(*this);
+        if (_style_collection)
+            StyleAlgorithm().link_style_recursively(*this);
     }
 
     StyleHash const& Node::style_hash() const
@@ -192,7 +196,14 @@ namespace gpugraph
     {
         StyleCompiler([this](auto block) {
             _style = std::move(block);
-        }).compile(source);
+        }).compile("x{" + source + "}");
+        if (_style_collection)
+            StyleAlgorithm().link_style_recursively(*this);
+    }
+
+    ComputedStyleSet const& Node::computed_style_set() const
+    {
+        return _computed_style_set;
     }
 
 }

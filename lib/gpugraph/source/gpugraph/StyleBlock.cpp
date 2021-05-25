@@ -53,4 +53,10 @@ namespace gpugraph
         return _rules;
     }
 
+    void StyleBlock::apply_to(ComputedStyleSet const& parent, ComputedStyleSet& set)
+    {
+        for (auto& rule : _rules)
+            rule(parent, set);
+    }
+
 }

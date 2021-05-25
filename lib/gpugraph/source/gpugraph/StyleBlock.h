@@ -28,6 +28,8 @@
 namespace gpugraph
 {
 
+    class ComputedStyleSet;
+
     class StyleBlock
     {
     public:
@@ -35,6 +37,7 @@ namespace gpugraph
 
         bool is_linkable_to(Node const&) const;
         bool is_applicable_to(Node const&) const;
+        void apply_to(ComputedStyleSet const& parent, ComputedStyleSet&);
 
         std::shared_ptr<StyleSelector> const& selector() const;
         std::vector<StyleRule> const& rules() const;

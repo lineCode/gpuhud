@@ -65,6 +65,8 @@ namespace gpuhud
 
     private:
         void hot_reload_style();
+        void make_root_node_fill_window();
+
         bool _hot_reload_style = false;
         std::optional<std::string> _style_filename;
         gpugraph::Debounce _style_debouncer;
